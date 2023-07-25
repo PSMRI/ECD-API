@@ -74,7 +74,6 @@ public class QualityAuditController {
 
 	}
 
-	// anil have created SP
 	@GetMapping(value = "/getQuestionSectionForCallRatings/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch question and section for call ratings", description = "Desc - Fetch question and section for call ratings")
 	@ApiResponses(value = {
@@ -90,7 +89,6 @@ public class QualityAuditController {
 
 	}
 
-	// single master
 	@GetMapping(value = "/getQualityAuditGradesByPSMID/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch quality audit grades", description = "Desc - Fetch quality audit grades")
 	@ApiResponses(value = {
@@ -132,7 +130,7 @@ public class QualityAuditController {
 	}
 
 	@PostMapping(value = "/call-reaudit", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "call reaudit", description = "Desc - call reaudit")
+	@Operation(summary = "Call reaudit", description = "Desc - call reaudit")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),

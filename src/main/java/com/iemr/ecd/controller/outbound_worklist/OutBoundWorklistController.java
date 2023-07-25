@@ -43,12 +43,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-/***
- * 
- * @author NE298657
- *
- */
-
 @RestController
 @RequestMapping(value = "/outbound-worklist", headers = "Authorization")
 @CrossOrigin()

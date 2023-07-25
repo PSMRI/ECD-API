@@ -50,9 +50,8 @@ public class ChartsController {
 	@Autowired
 	ChartsImpl chartsImpl;
 
-	// chart - 1
+	@Operation(summary = "Get centre overall quality rating", description = "Desc - ")
 	@GetMapping(value = "/getCentreOverallQualityRating/{psmId}/{frequency}/{month}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "", description = "Desc - ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -66,9 +65,8 @@ public class ChartsController {
 				HttpStatus.OK);
 	}
 
-	// chart - 2
+	@Operation(summary = "Get actor wise quality ratings", description = "Desc - ")
 	@GetMapping(value = "/getActorWiseQualityRatings/{psmId}/{roleName}/{month}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "", description = "Desc - ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -81,8 +79,8 @@ public class ChartsController {
 		return new ResponseEntity<>(chartsImpl.getActorWiseQualityRatings(psmId, roleName, month), HttpStatus.OK);
 	}
 
+	@Operation(summary = "Get tenure wise quality rating", description = "Desc - ")
 	@GetMapping(value = "/getTenureWiseQualityRating/{psmId}/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "", description = "Desc - ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -95,8 +93,8 @@ public class ChartsController {
 		return new ResponseEntity<>(chartsImpl.getTenureWiseQualityRatings(psmId, roleName), HttpStatus.OK);
 	}
 
+	@Operation(summary = "Get grade wise agent count", description = "Desc - ")
 	@GetMapping(value = "/getGradeWiseAgentCount/{psmId}/{frequency}/{frequencyValue}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "", description = "Desc - ")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),

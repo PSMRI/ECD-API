@@ -46,12 +46,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-/***
- * 
- * @author NE298657
- *
- */
-
 @RestController
 @RequestMapping(value = "/callConfiguration", headers = "Authorization")
 @CrossOrigin()
@@ -71,22 +65,7 @@ public class CallConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<List<CallConfiguration>> createCallConfiguration(
 			@RequestBody List<CallConfiguration> callConfigurations) {
-		// add logic to create call configuration
 		return new ResponseEntity<>(callConfigurationImpl.createCallConfigurations(callConfigurations), HttpStatus.OK);
-	}
-
-	@Deprecated
-	@GetMapping(value = "/getAll", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch call configuration", description = "Desc - Fetch call configuration")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
-					@Content(mediaType = "application/json") }),
-			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<List<CallConfiguration>> getAllCallConfigurations() {
-		return new ResponseEntity<>(callConfigurationImpl.getCallConfigurations(), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getById/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

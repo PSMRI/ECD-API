@@ -49,10 +49,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping(value = "/gradeConfiguration", headers = "Authorization")
 @CrossOrigin()
 public class GradeConfigurationController {
-	
+
 	@Autowired
 	private GradeConfigurationImpl gradeConfigurationImpl;
-	
+
 	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Create grade configuration", description = "Desc - Create grade configuration")
 	@ApiResponses(value = {
@@ -61,13 +61,12 @@ public class GradeConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
-	public ResponseEntity<String> createGradeConfiguration(
-			@RequestBody List<GradeConfiguration> gradeConfiguration) {
-		
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<String> createGradeConfiguration(@RequestBody List<GradeConfiguration> gradeConfiguration) {
+
 		return new ResponseEntity<>(gradeConfigurationImpl.createGradeConfiguration(gradeConfiguration), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch grade configuration", description = "Desc - Fetch grade configuration")
 	@ApiResponses(value = {
@@ -76,11 +75,11 @@ public class GradeConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<List<GradeConfiguration>> getGradeConfigurationByPSMId(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(gradeConfigurationImpl.getGradeConfigurationByPSMId(psmId), HttpStatus.OK);
 	}
-	
+
 	@PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update grade configuration", description = "Desc - Update grade configuration")
 	@ApiResponses(value = {
@@ -89,7 +88,7 @@ public class GradeConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<String> updateGradeConfiguration(@RequestBody GradeConfiguration gradeConfiguration) {
 		return new ResponseEntity<>(gradeConfigurationImpl.updateGradeConfiguration(gradeConfiguration), HttpStatus.OK);
 	}

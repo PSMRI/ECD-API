@@ -52,7 +52,7 @@ public class BeneficiaryRegistrationController {
 
 	@CrossOrigin()
 	@PostMapping(value = "/registration", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Create Beneficiary registration", description = "Desc - Create Beneficiary registration")
+	@Operation(summary = "Create beneficiary registration", description = "Desc - Create Beneficiary registration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -69,7 +69,7 @@ public class BeneficiaryRegistrationController {
 
 	@CrossOrigin()
 	@PostMapping(value = "/updateBeneficiaryDetails", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Update Beneficiary details", description = "Desc - Update Beneficiary details")
+	@Operation(summary = "Update beneficiary details", description = "Desc - Update Beneficiary details")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),

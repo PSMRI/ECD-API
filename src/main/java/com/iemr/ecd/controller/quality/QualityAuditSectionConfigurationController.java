@@ -51,7 +51,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public class QualityAuditSectionConfigurationController {
 	@Autowired
 	private QualityAuditSectionConfigurationImpl qualityAuditSectionConfigurationImpl;
-	
+
 	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Create quality audit section configuration", description = "Desc - Create quality audit section configuration")
 	@ApiResponses(value = {
@@ -60,13 +60,14 @@ public class QualityAuditSectionConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<String> createQualityAuditSectionConfiguration(
 			@RequestBody List<QualityAuditSectionConfiguration> qualityAuditSectionConfiguration) {
-		
-		return new ResponseEntity<>(qualityAuditSectionConfigurationImpl.createQualityAuditSectionConfiguration(qualityAuditSectionConfiguration), HttpStatus.OK);
+
+		return new ResponseEntity<>(qualityAuditSectionConfigurationImpl
+				.createQualityAuditSectionConfiguration(qualityAuditSectionConfiguration), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch quality audit section configuration", description = "Desc - Fetch quality audit section configuration")
 	@ApiResponses(value = {
@@ -75,11 +76,13 @@ public class QualityAuditSectionConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
-	public ResponseEntity<List<QualityAuditSectionConfiguration>> getQualityAuditSectionConfigurationByPSMId(@PathVariable Integer psmId) {
-		return new ResponseEntity<>(qualityAuditSectionConfigurationImpl.getQualityAuditSectionConfigurationByPSMId(psmId), HttpStatus.OK);
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<List<QualityAuditSectionConfiguration>> getQualityAuditSectionConfigurationByPSMId(
+			@PathVariable Integer psmId) {
+		return new ResponseEntity<>(
+				qualityAuditSectionConfigurationImpl.getQualityAuditSectionConfigurationByPSMId(psmId), HttpStatus.OK);
 	}
-	
+
 	@PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update quality audit section configuration", description = "Desc - Update quality audit section configuration")
 	@ApiResponses(value = {
@@ -88,9 +91,11 @@ public class QualityAuditSectionConfigurationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
-	public ResponseEntity<String> updateQualityAuditSectionConfiguration(@RequestBody QualityAuditSectionConfiguration qualityAuditSectionConfiguration) {
-		return new ResponseEntity<>(qualityAuditSectionConfigurationImpl.updateQualityAuditSectionConfiguration(qualityAuditSectionConfiguration), HttpStatus.OK);
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<String> updateQualityAuditSectionConfiguration(
+			@RequestBody QualityAuditSectionConfiguration qualityAuditSectionConfiguration) {
+		return new ResponseEntity<>(qualityAuditSectionConfigurationImpl
+				.updateQualityAuditSectionConfiguration(qualityAuditSectionConfiguration), HttpStatus.OK);
 	}
 
 }

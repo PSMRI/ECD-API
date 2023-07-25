@@ -40,12 +40,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-/***
- * 
- * @author NE298657
- *
- */
-
 @RestController
 @CrossOrigin()
 public class DataUploadController {
@@ -64,7 +58,6 @@ public class DataUploadController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<Object> allocateCalls(@RequestHeader("Authorization") String Authorization,
 			@RequestBody RCHFileUploadDto rchFileUploadDto) {
-		// add logic to create call configuration
 		return new ResponseEntity<>(rchDataUploadServiceImpl.uploadRCDData(rchFileUploadDto), HttpStatus.OK);
 	}
 

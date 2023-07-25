@@ -51,46 +51,51 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 public class AgentQualityAuditorMappingController {
 	@Autowired
 	private AgentQualityAuditorMappingImpl agentQualityAuditorMappingImpl;
-	
+
 	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Create Agent quality auditor mapping", description = "Desc - Create Agent quality auditor mapping")
+	@Operation(summary = "Create agent quality auditor mapping", description = "Desc - Create Agent quality auditor mapping")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<String> createAgentQualityAuditorMapping(
 			@RequestBody AgentQualityAuditorMap agentQualityAuditorMap) {
-		
-		return new ResponseEntity<>(agentQualityAuditorMappingImpl.createAgentQualityAuditorMapping(agentQualityAuditorMap), HttpStatus.OK);
+
+		return new ResponseEntity<>(
+				agentQualityAuditorMappingImpl.createAgentQualityAuditorMapping(agentQualityAuditorMap), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch Agent quality auditor mapping", description = "Desc - Fetch Agent quality auditor mapping")
+	@Operation(summary = "Fetch agent quality auditor mapping", description = "Desc - Fetch Agent quality auditor mapping")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
-	public ResponseEntity<List<AgentQualityAuditorMap>> getAgentQualityAuditorMappingByPSMId(@PathVariable Integer psmId) {
-		return new ResponseEntity<>(agentQualityAuditorMappingImpl.getAgentQualityAuditorMappingByPSMId(psmId), HttpStatus.OK);
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<List<AgentQualityAuditorMap>> getAgentQualityAuditorMappingByPSMId(
+			@PathVariable Integer psmId) {
+		return new ResponseEntity<>(agentQualityAuditorMappingImpl.getAgentQualityAuditorMappingByPSMId(psmId),
+				HttpStatus.OK);
 	}
-	
+
 	@PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Update Agent quality auditor mapping", description = "Desc - Update Agent quality auditor mapping")
+	@Operation(summary = "Update agent quality auditor mapping", description = "Desc - Update Agent quality auditor mapping")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
 			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC)})
-	public ResponseEntity<String> updateAgentQualityAuditorMapping(@RequestBody AgentQualityAuditorMap agentQualityAuditorMap) {
-		return new ResponseEntity<>(agentQualityAuditorMappingImpl.updateAgentQualityAuditorMapping(agentQualityAuditorMap), HttpStatus.OK);
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<String> updateAgentQualityAuditorMapping(
+			@RequestBody AgentQualityAuditorMap agentQualityAuditorMap) {
+		return new ResponseEntity<>(
+				agentQualityAuditorMappingImpl.updateAgentQualityAuditorMapping(agentQualityAuditorMap), HttpStatus.OK);
 	}
 
 }

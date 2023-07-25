@@ -56,6 +56,8 @@ import com.iemr.ecd.dao.masters.TypeOfComplaints;
 import com.iemr.ecd.dao.masters.V_GetUserlangmapping;
 import com.iemr.ecd.service.masters.MasterServiceImpl;
 
+import io.swagger.v3.oas.annotations.Operation;
+
 @RestController
 @RequestMapping(value = "/master", headers = "Authorization")
 @CrossOrigin()
@@ -63,6 +65,7 @@ public class MastersController {
 	@Autowired
 	private MasterServiceImpl masterServiceImpl;
 
+	@Operation(summary = "Get agents by role id", description = "Desc - RCH data upload")
 	@GetMapping("/getAgentsByRoleId/{roleId}")
 	public ResponseEntity<List<AgentsViewMaster>> getAgentsByRoleId(
 			@RequestHeader(value = "Authorization") String Authorization, @PathVariable Integer roleId) {
@@ -70,72 +73,84 @@ public class MastersController {
 
 	}
 
+	@Operation(summary = "Get answer type", description = "Desc - RCH data upload")
 	@GetMapping("/getAnswerType")
 	public ResponseEntity<List<AnswerType>> getAnswerType() {
 		return new ResponseEntity<>(masterServiceImpl.getAnswerType(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get call not answered", description = "Desc - RCH data upload")
 	@GetMapping("/getCallNotAnswered")
 	public ResponseEntity<List<CallNotAnsweredReason>> getCallNotAnsweredReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getCallNotAnsweredReasons(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get congenital anomalies", description = "Desc - RCH data upload")
 	@GetMapping("/getCongenitalAnomalies")
 	public ResponseEntity<List<CongenitalAnomalies>> getCongenitalAnomalies() {
 		return new ResponseEntity<>(masterServiceImpl.getCongenitalAnomalies(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get cycles", description = "Desc - RCH data upload")
 	@GetMapping("/getCycles")
 	public ResponseEntity<List<Cycles>> getCycles() {
 		return new ResponseEntity<>(masterServiceImpl.getAllCycles(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get HRNI reasons", description = "Desc - RCH data upload")
 	@GetMapping("/getHRNIReasons")
 	public ResponseEntity<List<HRNIReasons>> getHRNIReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getAllHRNIReasons(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get HRP reasons", description = "Desc - RCH data upload")
 	@GetMapping("/getHRPReasons")
 	public ResponseEntity<List<HRPReasons>> getHRPReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getAllHRPReasons(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get language", description = "Desc - RCH data upload")
 	@GetMapping("/getLanguage")
 	public ResponseEntity<List<Language>> getLanguage() {
 		return new ResponseEntity<>(masterServiceImpl.getLanguage(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get no further calls reason", description = "Desc - RCH data upload")
 	@GetMapping("/getNoFurtherCallsReason")
 	public ResponseEntity<List<NoFurtherCallsReason>> getNoFurtherCallsReason() {
 		return new ResponseEntity<>(masterServiceImpl.getNoFurtherCallsReason(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get offices", description = "Desc - RCH data upload")
 	@GetMapping("/getOffices")
 	public ResponseEntity<List<Offices>> getOffices() {
 		return new ResponseEntity<>(masterServiceImpl.findOffices(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get offices by psmid", description = "Desc - RCH data upload")
 	@GetMapping("/getOfficesByPSMID/{psmId}")
 	public ResponseEntity<List<Offices>> getOfficesByPSMID(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.findOfficesByPsmId(psmId), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get offices by district id", description = "Desc - RCH data upload")
 	@GetMapping("/getOfficesByDistrictId/{districtId}")
 	public ResponseEntity<List<Offices>> getOfficesByDistrictId(Integer districtId) {
 		return new ResponseEntity<>(masterServiceImpl.findOfficesByDistrictId(districtId), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get offices by district id and psmid", description = "Desc - RCH data upload")
 	@GetMapping("/getOfficesByDistrictIdAndPSMID/{districtId}/{psmId}")
 	public ResponseEntity<List<Offices>> getOfficesByDistrictIdAndPSMID(@PathVariable Integer districtId,
 			@PathVariable Integer psmId) {
@@ -144,65 +159,76 @@ public class MastersController {
 
 	}
 
+	@Operation(summary = "Get SMS parameters", description = "Desc - RCH data upload")
 	@GetMapping("/getSMSParameters")
 	public ResponseEntity<List<SMSParametersMapping>> getSMSParameters() {
 		return new ResponseEntity<>(masterServiceImpl.getSMSParameters(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get questionnaire type", description = "Desc - RCH data upload")
 	@GetMapping("/getQuestionnaireType")
 	public ResponseEntity<List<QuestionnaireType>> getQuestionnaireType() {
 		return new ResponseEntity<>(masterServiceImpl.getQuestionnaireType(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get roles by psmid", description = "Desc - RCH data upload")
 	@GetMapping("/getRolesByPsmId/{psmId}")
 	public ResponseEntity<List<Role>> getRolesByPsmId(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.getRolesByPsmId(psmId), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get SMS types", description = "Desc - RCH data upload")
 	@GetMapping("/getSMSTypes")
 	public ResponseEntity<List<SMSType>> getSMSTypes() {
 		return new ResponseEntity<>(masterServiceImpl.getSMSTypes(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get type of complaints", description = "Desc - RCH data upload")
 	@GetMapping("/getTypeOfComplaints")
 	public ResponseEntity<List<TypeOfComplaints>> getTypeOfComplaints() {
 		return new ResponseEntity<>(masterServiceImpl.getTypeOfComplaints(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get SMS values", description = "Desc - RCH data upload")
 	@GetMapping("/getSMSValues")
 	public ResponseEntity<List<SMSParameters>> getSMSValues() {
 		return new ResponseEntity<>(masterServiceImpl.getSMSValues(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get grades", description = "Desc - RCH data upload")
 	@GetMapping("/getGrades")
 	public ResponseEntity<List<GradeMaster>> getGrades() {
 		return new ResponseEntity<>(masterServiceImpl.getGrades(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get sections by psmid", description = "Desc - RCH data upload")
 	@GetMapping("/getSectionsByPsmId/{psmId}")
 	public ResponseEntity<List<QuestionnaireSections>> getSectionsByPsmId(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.getSectionsByPsmId(psmId), HttpStatus.OK);
 	}
 
+	@Operation(summary = "Get frequency", description = "Desc - RCH data upload")
 	@GetMapping("/getFrequency")
 	public ResponseEntity<List<Frequency>> getFrequency() {
 		return new ResponseEntity<>(masterServiceImpl.getFrequency(), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get language by user id", description = "Desc - RCH data upload")
 	@GetMapping("/getLanguageByUserId/{userId}")
 	public ResponseEntity<List<V_GetUserlangmapping>> getLanguageByUserId(@PathVariable Integer userId) {
 		return new ResponseEntity<>(masterServiceImpl.getLanguageByUserId(userId), HttpStatus.OK);
 
 	}
 
+	@Operation(summary = "Get gender", description = "Desc - RCH data upload")
 	@GetMapping("/getGender")
 	public ResponseEntity<List<Gender>> getGender() {
 		return new ResponseEntity<>(masterServiceImpl.getGenders(), HttpStatus.OK);

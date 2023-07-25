@@ -52,12 +52,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
-/***
- * 
- * @author NE298657
- *
- */
-
 @RestController
 @RequestMapping(value = "/Questionnaire", headers = "Authorization")
 @CrossOrigin()
@@ -80,19 +74,6 @@ public class EcdQuestionareController {
 		return new ResponseEntity<>(questionareServiceImpl.createQuestionares(questionareList), HttpStatus.OK);
 	}
 
-	@Deprecated
-	@GetMapping("/getQuestionnaires")
-	public ResponseEntity<List<Questionnaire>> getQuestionnaires() {
-		return new ResponseEntity<>(null, HttpStatus.OK);
-	}
-
-	@Deprecated
-	@GetMapping("/getQuestionnaireById/{id}")
-	public ResponseEntity<Questionnaire> getQuestionnaireById(@PathVariable Long id) {
-		return new ResponseEntity<>(null, HttpStatus.OK);
-
-	}
-
 	@GetMapping(value = "/getQuestionnairesByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch questionnaire", description = "Desc - Fetch questionnaire")
 	@ApiResponses(value = {
@@ -107,7 +88,7 @@ public class EcdQuestionareController {
 	}
 
 	@GetMapping(value = "/getUnMappedQuestionnairesByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch Unmapped questionnaire", description = "Desc - Fetch Unmapped questionnaire")
+	@Operation(summary = "Fetch unmapped questionnaire", description = "Desc - Fetch Unmapped questionnaire")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -132,8 +113,6 @@ public class EcdQuestionareController {
 		return new ResponseEntity<>(questionareServiceImpl.updateQuestionares(questionare), HttpStatus.OK);
 	}
 
-	// sections
-
 	@PostMapping(value = "/createSections", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Create sections", description = "Desc - Create sections")
 	@ApiResponses(value = {
@@ -146,12 +125,6 @@ public class EcdQuestionareController {
 	public ResponseEntity<String> createSections(@Valid @RequestBody List<QuestionnaireSections> questionareSections) {
 
 		return new ResponseEntity<>(questionareServiceImpl.createSections(questionareSections), HttpStatus.OK);
-	}
-
-	@Deprecated
-	@GetMapping("/getSections")
-	public ResponseEntity<List<QuestionnaireSections>> getSections() {
-		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/getSectionsByProvider/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -198,7 +171,7 @@ public class EcdQuestionareController {
 	}
 
 	@GetMapping(value = "/getQuestionnairesAndSectionMapBySectionId/{sectionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch mapped questionnaire and section by sectionId", description = "Desc - Fetch mapped questionnaire and section by sectionId")
+	@Operation(summary = "Fetch mapped questionnaire and section by section id", description = "Desc - Fetch mapped questionnaire and section by sectionId")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -213,7 +186,7 @@ public class EcdQuestionareController {
 	}
 
 	@GetMapping(value = "/getQuestionnairesAndSectionMapByProvider/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch mapped questionnaire and section by psmId", description = "Desc - Fetch mapped questionnaire and section by psmId")
+	@Operation(summary = "Fetch mapped questionnaire and section by psmid", description = "Desc - Fetch mapped questionnaire and section by psmId")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -256,9 +229,9 @@ public class EcdQuestionareController {
 		return new ResponseEntity<>(questionareServiceImpl.editQuestionnaireSectionMap(sectionQuestionnaireMapping),
 				HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getUnMappedQuestionnaires/{psmId}/{sectionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch Unmapped questionnaire", description = "Desc - Fetch Unmapped questionnaire")
+	@Operation(summary = "Fetch unmapped questionnaire", description = "Desc - Fetch Unmapped questionnaire")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),

@@ -53,7 +53,7 @@ public class SampleSelectionConfigurationController {
 	private SampleSelectionConfigurationImpl sampleSelectionConfigurationImpl;
 
 	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Create Sample selection configuration", description = "Desc - Create Sample selection configuration")
+	@Operation(summary = "Create sample selection configuration", description = "Desc - Create Sample selection configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -70,7 +70,7 @@ public class SampleSelectionConfigurationController {
 	}
 
 	@GetMapping(value = "/getByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch Sample selection configuration", description = "Desc - Fetch Sample selection configuration")
+	@Operation(summary = "Fetch sample selection configuration", description = "Desc - Fetch Sample selection configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -85,7 +85,7 @@ public class SampleSelectionConfigurationController {
 	}
 
 	@PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Update Sample selection configuration", description = "Desc - Update Sample selection configuration")
+	@Operation(summary = "Update sample selection configuration", description = "Desc - Update Sample selection configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
