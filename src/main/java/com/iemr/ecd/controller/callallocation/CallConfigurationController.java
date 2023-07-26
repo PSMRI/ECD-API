@@ -19,9 +19,9 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
-package com.iemr.ecd.controller.call_allocation_configuration;
+package com.iemr.ecd.controller.callallocation;
 
-import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,9 +36,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.iemr.ecd.dto.RequestCallAllocationDTO;
-import com.iemr.ecd.dto.supervisor.ResponseEligibleCallRecordsDTO;
-import com.iemr.ecd.service.call_conf_allocation.CallAllocationImpl;
+import com.iemr.ecd.dao.CallConfiguration;
+import com.iemr.ecd.dto.CallSectionMappingDTO;
+import com.iemr.ecd.service.call_conf_allocation.CallConfigurationImpl;
 import com.iemr.ecd.utils.advice.exception_handler.CustomExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,15 +47,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
-@RequestMapping(value = "/callAllocation", headers = "Authorization")
+@RequestMapping(value = "/callConfiguration", headers = "Authorization")
 @CrossOrigin()
-public class CallAllocationController {
+public class CallConfigurationController {
 
 	@Autowired
-	private CallAllocationImpl callAllocationImpl;
+	private CallConfigurationImpl callConfigurationImpl;
 
-	@PostMapping(value = "/allocateCalls", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Create call allocation", description = "Desc - Create call allocation")
+	@PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Create call configuration", description = "Desc - Create call configuration")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -63,13 +63,13 @@ public class CallAllocationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<Object> allocateCalls(@RequestBody RequestCallAllocationDTO callAllocationDto)
-			throws ParseException {
-		return new ResponseEntity<>(callAllocationImpl.allocateCalls(callAllocationDto), HttpStatus.OK);
+	public ResponseEntity<List<CallConfiguration>> createCallConfiguration(
+			@RequestBody List<CallConfiguration> callConfigurations) {
+		return new ResponseEntity<>(callConfigurationImpl.createCallConfigurations(callConfigurations), HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/getEligibleRecordsInfo/{psmId}/{phoneNoType}/{recordType}/{fDate}/{tDate}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch eligible records for allocation", description = "Desc - Fetch eligible records for allocation")
+	@GetMapping(value = "/getById/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch call configuration by id", description = "Desc - Fetch call configuration by id")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),
@@ -77,53 +77,64 @@ public class CallAllocationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<ResponseEligibleCallRecordsDTO> getEligibleRecordsInfo(@PathVariable int psmId,
-			@PathVariable String phoneNoType, @PathVariable String recordType, @PathVariable String fDate,
-			@PathVariable String tDate) throws Exception {
+	public ResponseEntity<CallConfiguration> getCallConfigurationById(@PathVariable Long id) {
+		return new ResponseEntity<>(callConfigurationImpl.getCallConfigurationById(id), HttpStatus.OK);
+
+	}
+
+	@GetMapping(value = "/getByPSMId/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch call configuration by psmId", description = "Desc - Fetch call configuration by psmId")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<List<CallConfiguration>> getCallConfigurationByPSMId(@PathVariable Integer psmId) {
+		return new ResponseEntity<>(callConfigurationImpl.getCallConfigurationByPSMID(psmId), HttpStatus.OK);
+	}
+
+	@PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Update call configuration", description = "Desc - Update call configuration")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<List<CallConfiguration>> updateCallConfiguration(
+			@RequestBody List<CallConfiguration> callConfigurations) {
+		return new ResponseEntity<>(callConfigurationImpl.updateCallConfigurations(callConfigurations), HttpStatus.OK);
+	}
+
+	@PostMapping(value = "/mapCallAndSection", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Create call and section mapping", description = "Desc - Create call and section mapping")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<Object> mapCallAndSection(@RequestBody CallSectionMappingDTO callSectionMappingDTO) {
+		return new ResponseEntity<>(callConfigurationImpl.mapCallAndSection(callSectionMappingDTO), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/getCallAndSectionMapByPsmIdAndCallConfigId/{psmId}/{callConfigId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch mapped call and section", description = "Desc - Fetch mapped call and section")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<Object> getCallAndSectionMapByPsmIdAndCallConfigId(@PathVariable Integer psmId,
+			@PathVariable Integer callConfigId) {
 		return new ResponseEntity<>(
-				callAllocationImpl.getEligibleRecordsInfo(psmId, phoneNoType, recordType, fDate, tDate), HttpStatus.OK);
-
-	}
-
-	@PostMapping(value = "/getAllocatedCallCountUser", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch allocated call count", description = "Desc - Fetch allocated call count")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
-					@Content(mediaType = "application/json") }),
-			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<String> getAllocatedCallCountUser(@RequestBody RequestCallAllocationDTO callAllocationDto) {
-		return new ResponseEntity<>(callAllocationImpl.getAllocatedCallCountUser(callAllocationDto), HttpStatus.OK);
-
-	}
-
-	@PostMapping(value = "/reAllocateCalls", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Create call re-allocation", description = "Desc - Create call re-allocation")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
-					@Content(mediaType = "application/json") }),
-			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<Object> reAllocateCalls(@RequestBody RequestCallAllocationDTO callAllocationDto) {
-		// add logic to create call configuration
-		return new ResponseEntity<>(callAllocationImpl.reAllocateCalls(callAllocationDto), HttpStatus.OK);
-	}
-
-	@PutMapping(value = "/moveToBin", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Move to bin", description = "Desc - Move to bin")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
-					@Content(mediaType = "application/json") }),
-			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
-			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<String> updateAlerts(@RequestBody RequestCallAllocationDTO callAllocationDto) {
-		return new ResponseEntity<>(callAllocationImpl.moveAllocatedCallsToBin(callAllocationDto), HttpStatus.OK);
+				callConfigurationImpl.getCallAndSectionMapByPsmIdAndCallConfigId(psmId, callConfigId), HttpStatus.OK);
 	}
 
 }
