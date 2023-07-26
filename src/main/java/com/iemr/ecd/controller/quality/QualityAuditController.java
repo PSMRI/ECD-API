@@ -75,7 +75,7 @@ public class QualityAuditController {
 	}
 
 	@GetMapping(value = "/getQuestionSectionForCallRatings/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Fetch question and section for call ratings", description = "Desc - Fetch question and section for call ratings")
+	@Operation(summary = "Fetch question section for call rating", description = "Desc - Fetch question and section for call ratings")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
 					@Content(mediaType = "application/json") }),

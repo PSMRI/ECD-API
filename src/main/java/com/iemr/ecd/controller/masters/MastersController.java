@@ -80,7 +80,7 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get call not answered", description = "Desc - RCH data upload")
+	@Operation(summary = "Get call not answered reasons", description = "Desc - RCH data upload")
 	@GetMapping("/getCallNotAnswered")
 	public ResponseEntity<List<CallNotAnsweredReason>> getCallNotAnsweredReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getCallNotAnsweredReasons(), HttpStatus.OK);
@@ -101,14 +101,14 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get HRNI reasons", description = "Desc - RCH data upload")
+	@Operation(summary = "Get high risk newborn infant reasons", description = "Desc - RCH data upload")
 	@GetMapping("/getHRNIReasons")
 	public ResponseEntity<List<HRNIReasons>> getHRNIReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getAllHRNIReasons(), HttpStatus.OK);
 
 	}
 
-	@Operation(summary = "Get HRP reasons", description = "Desc - RCH data upload")
+	@Operation(summary = "Get high risk pregnancy reasons", description = "Desc - RCH data upload")
 	@GetMapping("/getHRPReasons")
 	public ResponseEntity<List<HRPReasons>> getHRPReasons() {
 		return new ResponseEntity<>(masterServiceImpl.getAllHRPReasons(), HttpStatus.OK);
@@ -136,7 +136,7 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get offices by psmid", description = "Desc - RCH data upload")
+	@Operation(summary = "Get offices by PSM id", description = "Desc - RCH data upload")
 	@GetMapping("/getOfficesByPSMID/{psmId}")
 	public ResponseEntity<List<Offices>> getOfficesByPSMID(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.findOfficesByPsmId(psmId), HttpStatus.OK);
@@ -150,7 +150,7 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get offices by district id and psmid", description = "Desc - RCH data upload")
+	@Operation(summary = "Get offices by district id and PSM id", description = "Desc - RCH data upload")
 	@GetMapping("/getOfficesByDistrictIdAndPSMID/{districtId}/{psmId}")
 	public ResponseEntity<List<Offices>> getOfficesByDistrictIdAndPSMID(@PathVariable Integer districtId,
 			@PathVariable Integer psmId) {
@@ -173,7 +173,7 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get roles by psmid", description = "Desc - RCH data upload")
+	@Operation(summary = "Get roles by PSM id", description = "Desc - RCH data upload")
 	@GetMapping("/getRolesByPsmId/{psmId}")
 	public ResponseEntity<List<Role>> getRolesByPsmId(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.getRolesByPsmId(psmId), HttpStatus.OK);
@@ -208,7 +208,7 @@ public class MastersController {
 
 	}
 
-	@Operation(summary = "Get sections by psmid", description = "Desc - RCH data upload")
+	@Operation(summary = "Get sections by PSM id", description = "Desc - RCH data upload")
 	@GetMapping("/getSectionsByPsmId/{psmId}")
 	public ResponseEntity<List<QuestionnaireSections>> getSectionsByPsmId(@PathVariable Integer psmId) {
 		return new ResponseEntity<>(masterServiceImpl.getSectionsByPsmId(psmId), HttpStatus.OK);

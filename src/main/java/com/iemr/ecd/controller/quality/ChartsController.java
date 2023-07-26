@@ -65,7 +65,7 @@ public class ChartsController {
 				HttpStatus.OK);
 	}
 
-	@Operation(summary = "Get actor wise quality ratings", description = "Desc - ")
+	@Operation(summary = "Get actor wise quality rating", description = "Desc - ")
 	@GetMapping(value = "/getActorWiseQualityRatings/{psmId}/{roleName}/{month}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {

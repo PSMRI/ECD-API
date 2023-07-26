@@ -112,7 +112,7 @@ public class ReportController {
 	}
 
 	@CrossOrigin
-	@Operation(summary = "Get ECD comulative district report", description = "Desc - Get call details report")
+	@Operation(summary = "Get ECD cumulative district report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDCumulativeDistrictReport", method = RequestMethod.POST)
 	public ResponseEntity<Object> getCumulativeDistrictReport(@RequestBody String jsonRequest) {
 		String filename = null;
@@ -412,7 +412,7 @@ public class ReportController {
 	}
 
 	@CrossOrigin
-	@Operation(summary = "Get ECDHRP cases identified report", description = "Desc - Get call details report")
+	@Operation(summary = "Get ECD high risk pregnancy cases identified report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDHRPCasesIdentifiedReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getHRPCasesIdentifiedReport(@RequestBody String jsonRequest) {
 		String filename = null;
