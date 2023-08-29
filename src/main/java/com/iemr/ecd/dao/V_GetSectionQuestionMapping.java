@@ -73,5 +73,11 @@ public class V_GetSectionQuestionMapping {
 	private List<QuestionnaireValues> options;
 	@Transient
 	private String[] optionsArr;
+	
+	@Column(name = "Role")
+	private String role;
+	
+	@Transient
+	private String[] roles;
 
 }

@@ -190,15 +190,15 @@ public class QuestionareServiceImpl {
 					sectionQuestionnaireMapping.setPsmId(requestSectionQuestionnaireMappingDTO.getPsmId());
 					sectionQuestionnaireMapping.setQuestionId(questionare.getQuestionnaireId());
 					sectionQuestionnaireMapping.setRank(questionare.getRank());
-//					if (questionare.getRoles() != null && questionare.getRoles().length > 0) {
-//						StringBuffer sb = new StringBuffer();
-//						for (String role : questionare.getRoles()) {
-//							sb.append(role).append(",");
-//						}
-//						if (sb.length() >= 1)
-//							sectionQuestionnaireMapping.setRole(sb.substring(0, sb.length() - 1));
-//
-//					}
+					if (questionare.getRoles() != null && questionare.getRoles().length > 0) {
+						StringBuffer sb = new StringBuffer();
+						for (String role : questionare.getRoles()) {
+							sb.append(role).append(",");
+						}
+						if (sb.length() >= 1)
+							sectionQuestionnaireMapping.setRole(sb.substring(0, sb.length() - 1));
+
+					}
 
 					sectionQuestionnaireMappingList.add(sectionQuestionnaireMapping);
 				}
@@ -309,18 +309,15 @@ public class QuestionareServiceImpl {
 				for (QuestionnaireSections questionnaireSections : sectionList) {
 					List<V_GetSectionQuestionMapping> tempList = v_GetSectionQuestionMappingRepo
 							.findBySectionid(questionnaireSections.getSectionId());
-//					if (tempList != null) {
-//						for (V_GetSectionQuestionMapping resultset : tempList) {
-//							if (resultset.getRole() != null) {
-//								resultset.setRoles(resultset.getRole().split(","));
-//							}
-//							// else {
-////								resultset.setRoles(new String[0]);
-////							}
-//
-							responseList.addAll(tempList);
-//						}
-//					}
+					if (tempList != null) {
+						for (V_GetSectionQuestionMapping resultset : tempList) {
+							if (resultset.getRole() != null) {
+								resultset.setRoles(resultset.getRole().split(","));
+							}
+
+							responseList.add(resultset);
+						}
+					}
 				}
 			}
 
@@ -335,7 +332,7 @@ public class QuestionareServiceImpl {
 	private CallConfigurationRepo callConfigurationRepo;
 
 	public List<V_GetSectionQuestionMappingAssociates> getQuesAndSecMapAssociateByProvider(int psmId,
-			String ecdCallType) {
+			String ecdCallType, String role) {
 
 		try {
 
@@ -346,7 +343,7 @@ public class QuestionareServiceImpl {
 				List<V_GetSectionQuestionMappingAssociates> responseList = new ArrayList<>();
 
 				List<V_GetSectionQuestionMappingAssociates> tempList = v_GetSectionQuestionMappingAssociatesRepo
-						.findByPsmIdAndCallConfigId(psmId, callConfiguration.getCallConfigId().intValue());
+						.findByPsmIdAndCallConfigIdAndRole(psmId, callConfiguration.getCallConfigId().intValue(), role);
 
 				if (tempList != null && tempList.size() > 0) {
 					for (V_GetSectionQuestionMappingAssociates obj : tempList) {
@@ -425,15 +422,15 @@ public class QuestionareServiceImpl {
 
 		try {
 			if (sectionQuestionnaireMapping != null && sectionQuestionnaireMapping.getId() != null) {
-//				if (sectionQuestionnaireMapping.getRoles() != null
-//						&& sectionQuestionnaireMapping.getRoles().length > 0) {
-//					StringBuffer sb = new StringBuffer();
-//					for (String roles : sectionQuestionnaireMapping.getRoles()) {
-//						sb.append(roles).append(",");
-//					}
-//					if (sb.length() >= 1)
-//						sectionQuestionnaireMapping.setRole(sb.substring(0, sb.length() - 1));
-//				}
+				if (sectionQuestionnaireMapping.getRoles() != null
+						&& sectionQuestionnaireMapping.getRoles().length > 0) {
+					StringBuffer sb = new StringBuffer();
+					for (String roles : sectionQuestionnaireMapping.getRoles()) {
+						sb.append(roles).append(",");
+					}
+					if (sb.length() >= 1)
+						sectionQuestionnaireMapping.setRole(sb.substring(0, sb.length() - 1));
+				}
 				sectionQuestionnaireMappingRepo.save(sectionQuestionnaireMapping);
 			} else
 				throw new InvalidRequestException("NULL/Empty request", "please pass valid Id");

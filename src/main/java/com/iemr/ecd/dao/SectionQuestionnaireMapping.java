@@ -29,6 +29,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -74,5 +75,11 @@ public class SectionQuestionnaireMapping {
 
 	@Column(name = "LastModDate", insertable = false, updatable = false)
 	private Timestamp lastModDate;
+	
+	@Column(name = "Role")
+	private String role;
+	
+	@Transient
+	private String[] roles;
 
 }

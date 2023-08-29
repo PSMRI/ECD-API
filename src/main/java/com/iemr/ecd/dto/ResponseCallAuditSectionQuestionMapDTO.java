@@ -39,6 +39,7 @@ public class ResponseCallAuditSectionQuestionMapDTO {
 	private String question;
 	private Integer questionRank;
 	private Integer psmId;
+	private boolean isFatalQues;
 
 	private List<QualityQuestionareOptionsDTO> options;
 

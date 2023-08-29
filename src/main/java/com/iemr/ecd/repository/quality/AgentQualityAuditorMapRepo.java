@@ -37,16 +37,17 @@ public interface AgentQualityAuditorMapRepo extends CrudRepository<AgentQualityA
 
 	List<AgentQualityAuditorMap> findByPsmId(Integer psmId);
 
-	@Query(value = " CALL Pr_QualityAuditorWorklist(:fDate, :tDate,:psmId, :langId, :agentId, :roleId, :isValid ) ", nativeQuery = true)
+	@Query(value = " CALL Pr_QualityAuditorWorklist(:fDate, :tDate,:psmId, :langId, :agentId, :roleId, :isValid, :cycleId, :prevCycleFromDate, :prevCycleToDate ) ", nativeQuery = true)
 	public List<String[]> getQualityAuditorWorklist(@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,
 			@Param("psmId") Integer psmId, @Param("langId") Integer langId, @Param("agentId") Integer agentId,
-			@Param("roleId") Integer roleId, @Param("isValid") Boolean isValid);
-	
+			@Param("roleId") Integer roleId, @Param("isValid") Boolean isValid, @Param("cycleId") Integer cycleId,
+			@Param("prevCycleFromDate") Timestamp prevCycleFromDate,
+			@Param("prevCycleToDate") Timestamp prevCycleToDate);
+
 	@Query(value = " CALL db_iemr.Pr_BeneficiaryCasesheet(:benCallId) ", nativeQuery = true)
 	public List<String[]> getBeneficiaryCasesheet(@Param("benCallId") Long benCallId);
-	
+
 	@Query(value = " CALL db_iemr.Pr_BeneficiaryCallResponse(:benCallId) ", nativeQuery = true)
 	public List<String[]> getBeneficiaryCallResponse(@Param("benCallId") Long benCallId);
-
 
 }

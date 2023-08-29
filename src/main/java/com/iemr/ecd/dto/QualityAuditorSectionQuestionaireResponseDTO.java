@@ -44,11 +44,13 @@ public class QualityAuditorSectionQuestionaireResponseDTO {
 	private Integer questionRank;
 	private String answerType;
 	private Integer psmId;
+	private Boolean isFatalQues;
 	private Boolean deleted;
 	private String createdBy;
 	private Timestamp createdDate;
 	private String modifiedBy;
 	private Timestamp lastModDate;
+	
 	
 	private List<String> options;
 	private List<Integer> scores;

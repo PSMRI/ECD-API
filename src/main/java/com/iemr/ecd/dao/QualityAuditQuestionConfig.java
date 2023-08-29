@@ -85,5 +85,8 @@ public class QualityAuditQuestionConfig {
 	
 	@Column(name = "LastModDate", insertable = false, updatable = false)
 	private Timestamp lastModDate;
+	
+	@Column(name = "isFatalQuestion")
+	private Boolean isFatalQues;
 
 }

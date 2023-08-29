@@ -23,8 +23,8 @@ package com.iemr.ecd.repository.ecd;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-
 import com.iemr.ecd.dao.V_GetSectionQuestionMappingAssociates;
 
 public interface V_GetSectionQuestionMappingAssociatesRepo
@@ -33,6 +33,14 @@ public interface V_GetSectionQuestionMappingAssociatesRepo
 
 	List<V_GetSectionQuestionMappingAssociates> findByPsmId(Integer psmId);
 
-	List<V_GetSectionQuestionMappingAssociates> findByPsmIdAndCallConfigId(Integer psmId, Integer callConfigId);
+//	@Query(value = "SELECT * FROM V_GetSectionQuestionMappingAssociates "
+//			+ "WHERE psmId =:psmId AND callConfigId =:callConfigId AND role LIKE %:role%", nativeQuery = true)
+//	List<V_GetSectionQuestionMappingAssociates> findByPsmIdAndCallConfigIdAndRole(@Param("psmId") Integer psmId,
+//			@Param("callConfigId") Integer callConfigId, @Param("role") String role);
+
+	@Query("SELECT t FROM V_GetSectionQuestionMappingAssociates t "
+			+ "WHERE t.psmId =:psmId AND t.callConfigId =:callConfigId AND t.role LIKE %:role%")
+	List<V_GetSectionQuestionMappingAssociates> findByPsmIdAndCallConfigIdAndRole(Integer psmId, Integer callConfigId,
+			String role);
 
 }

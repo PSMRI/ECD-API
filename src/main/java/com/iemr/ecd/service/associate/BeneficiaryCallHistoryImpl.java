@@ -129,6 +129,8 @@ public class BeneficiaryCallHistoryImpl {
 		Map<String, String> resMap = new HashMap<>();
 		try {
 			bencall.setCallTime(Timestamp.from(Instant.now()));
+			if(bencall.getCallTypeId() == null)
+				bencall.setCallTypeId(9999);
 			Bencall callDetails = t_benCallRepo.save(bencall);
 			resMap.put("benCallId", callDetails.getBenCallId().toString());
 

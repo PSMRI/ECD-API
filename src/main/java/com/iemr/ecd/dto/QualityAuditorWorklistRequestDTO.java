@@ -47,6 +47,9 @@ public class QualityAuditorWorklistRequestDTO {
 
 	private Timestamp fromDate;
 	private Timestamp toDate;
+	
+	private Timestamp prevCycleFromDate;
+	private Timestamp prevCycleToDate;
 
 //	private String fDate;
 //	private String tDate;

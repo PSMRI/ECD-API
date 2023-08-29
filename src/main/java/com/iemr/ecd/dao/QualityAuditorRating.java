@@ -88,5 +88,8 @@ public class QualityAuditorRating {
 	@Column(name = "LastModDate", insertable = false, updatable = false)
 	private Timestamp lastModDate;
 	
+	@Column(name = "isZeroCall")
+	private Boolean isZeroCall;
+	
 
 }

@@ -215,7 +215,7 @@ public class EcdQuestionareController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping(value = "/getQuesAndSecMapAssociateByProvider/{psmId}/{ecdCallType}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getQuesAndSecMapAssociateByProvider/{psmId}/{ecdCallType}/{role}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch mapped questionnaire and section for associate", description = "Desc - Fetch mapped questionnaire and section for associate")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
@@ -225,8 +225,8 @@ public class EcdQuestionareController {
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<List<V_GetSectionQuestionMappingAssociates>> getQuesAndSecMapAssociateByProvider(
-			@PathVariable int psmId, @PathVariable String ecdCallType) {
-		return new ResponseEntity<>(questionareServiceImpl.getQuesAndSecMapAssociateByProvider(psmId, ecdCallType),
+			@PathVariable int psmId, @PathVariable String ecdCallType, @PathVariable String role) {
+		return new ResponseEntity<>(questionareServiceImpl.getQuesAndSecMapAssociateByProvider(psmId, ecdCallType, role),
 				HttpStatus.OK);
 	}
 

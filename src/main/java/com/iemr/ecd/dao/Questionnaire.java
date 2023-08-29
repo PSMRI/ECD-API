@@ -91,4 +91,7 @@ public class Questionnaire {
 
 	@Transient
 	private Integer secQuesMapId;
+	
+	@Transient
+	private String[] roles;
 }

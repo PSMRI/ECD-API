@@ -72,5 +72,8 @@ public class V_get_Qualityaudit_SectionQuestionaireValues {
 
 	@Column(name = "ProviderServiceMapID")
 	private Integer psmId;
+	
+	@Column(name = "isFatalQuestion")
+	private Boolean isFatalQues;
 
 }

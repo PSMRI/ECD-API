@@ -182,5 +182,8 @@ public class Bencall {
 	
 	@Column(name = "isWrongNumber")
 	private Boolean isWrongNumber;
+	
+	@Column(name = "isZeroCall")
+	private Boolean isZeroCall;
 
 }

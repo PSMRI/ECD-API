@@ -21,20 +21,26 @@
 */
 package com.iemr.ecd.repo.call_conf_allocation;
 
+import java.sql.Timestamp;
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.ecd.dao.SampleSelectionConfiguration;
 
 @Repository
 
-public interface SampleSelectionConfigurationRepo extends CrudRepository<SampleSelectionConfiguration, Integer>{
-	
+public interface SampleSelectionConfigurationRepo extends CrudRepository<SampleSelectionConfiguration, Integer> {
+
 	List<SampleSelectionConfiguration> findByPsmId(Integer psmId);
 
 	List<SampleSelectionConfiguration> findByCycleIdAndDeletedAndPsmId(Integer cycleId, Boolean deleted, Integer psmId);
 
+	@Query("SELECT t FROM SampleSelectionConfiguration t WHERE t.psmId=:psmId AND DAY(:fromDate) BETWEEN t.fromDay AND t.toDay")
+	List<SampleSelectionConfiguration> findPreviousCycle(@Param("psmId") Integer psmId,
+			@Param("fromDate") Timestamp fromDate);
 
 }

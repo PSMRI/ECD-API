@@ -90,4 +90,7 @@ public class V_GetSectionQuestionMappingAssociates {
 	private List<QuestionnaireValues> options;
 	@Transient
 	private String[] optionsArr;
+	
+	@Column(name = "Role")
+	private String role;
 }

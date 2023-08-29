@@ -124,16 +124,19 @@ public class QualityAuditQuestionConfigurationImpl {
 						obj.setAnswerType(strArr[6]);
 					if (strArr[7] != null)
 						obj.setPsmId(Integer.valueOf(strArr[7]));
-					if (strArr[8] != null)
-						obj.setDeleted(Boolean.valueOf(strArr[8]));
+					if(strArr[8] != null)
+						obj.setIsFatalQues(Boolean.valueOf(strArr[8]));
 					if (strArr[9] != null)
-						obj.setCreatedBy(strArr[9]);
+						obj.setDeleted(Boolean.valueOf(strArr[9]));
 					if (strArr[10] != null)
-						obj.setCreatedDate(Timestamp.valueOf(strArr[10]));
+						obj.setCreatedBy(strArr[10]);
 					if (strArr[11] != null)
-						obj.setModifiedBy(strArr[11]);
+						obj.setCreatedDate(Timestamp.valueOf(strArr[11]));
 					if (strArr[12] != null)
-						obj.setLastModDate(Timestamp.valueOf(strArr[12]));
+						obj.setModifiedBy(strArr[12]);
+					if (strArr[13] != null)
+						obj.setLastModDate(Timestamp.valueOf(strArr[13]));
+					
 
 					List<QualityAuditQuestionnaireValues> optionsList = qualityAuditQuestionnaireValuesRepo
 							.findByQuestionIdAndPsmIdAndDeleted(obj.getQuestionId(), obj.getPsmId(), false);
