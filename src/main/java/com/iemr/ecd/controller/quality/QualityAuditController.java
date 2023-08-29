@@ -40,6 +40,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.iemr.ecd.dao.GradeConfiguration;
 import com.iemr.ecd.dto.BeneficiaryCasesheetDTO;
+import com.iemr.ecd.dto.QualityAuditorWorklistDatewiseRequestDTO;
+import com.iemr.ecd.dto.QualityAuditorWorklistDatewiseResponseDTO;
 import com.iemr.ecd.dto.QualityAuditorWorklistRequestDTO;
 import com.iemr.ecd.dto.QualityAuditorWorklistResponseDTO;
 import com.iemr.ecd.dto.ResponseCallAuditSectionQuestionMapDTO;
@@ -71,6 +73,23 @@ public class QualityAuditController {
 			@RequestBody QualityAuditorWorklistRequestDTO qualityAuditorWorklistRequestDTO) {
 
 		return new ResponseEntity<>(qualityAuditImpl.getQualityAuditorWorklist(qualityAuditorWorklistRequestDTO),
+				HttpStatus.OK);
+
+	}
+	
+	@PostMapping(value = "/getQualityAuditorWorklistDatewise", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch quality auditor worklist according to date", description = "Desc - Fetch quality auditor worklist datewise")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<List<QualityAuditorWorklistDatewiseResponseDTO>> getQualityAuditorWorklistDatewise(
+			@RequestBody QualityAuditorWorklistDatewiseRequestDTO qualityAuditorWorklistDatewiseRequestDTO) {
+
+		return new ResponseEntity<>(qualityAuditImpl.getQualityAuditorWorklistDatewise(qualityAuditorWorklistDatewiseRequestDTO),
 				HttpStatus.OK);
 
 	}

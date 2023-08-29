@@ -44,6 +44,8 @@ import com.iemr.ecd.dao.V_get_Qualityaudit_SectionQuestionaireValues;
 import com.iemr.ecd.dao.associate.Bencall;
 import com.iemr.ecd.dto.BeneficiaryCasesheetDTO;
 import com.iemr.ecd.dto.BeneficiaryCasesheetQuestionnaireDTO;
+import com.iemr.ecd.dto.QualityAuditorWorklistDatewiseRequestDTO;
+import com.iemr.ecd.dto.QualityAuditorWorklistDatewiseResponseDTO;
 import com.iemr.ecd.dto.QualityAuditorWorklistRequestDTO;
 import com.iemr.ecd.dto.QualityAuditorWorklistResponseDTO;
 import com.iemr.ecd.dto.QualityQuestionareOptionsDTO;
@@ -235,6 +237,73 @@ public class QualityAuditImpl {
 		}
 	}
 
+	//Method to fetch call audit data datewise
+		public List<QualityAuditorWorklistDatewiseResponseDTO> getQualityAuditorWorklistDatewise(
+				QualityAuditorWorklistDatewiseRequestDTO qualityAuditorWorklistDatewiseRequestDTO) {
+
+			try {
+				List<QualityAuditorWorklistDatewiseResponseDTO> responseList = new ArrayList<>();
+				QualityAuditorWorklistDatewiseResponseDTO response;
+
+				// create from-date & to-date from cycle info
+				if (qualityAuditorWorklistDatewiseRequestDTO.getValidFrom()!=null && qualityAuditorWorklistDatewiseRequestDTO.getValidTill()!= null) {
+					List<SampleSelectionConfiguration> resultList = sampleSelectionConfigurationRepo
+							.findByPsmId(qualityAuditorWorklistDatewiseRequestDTO.getPsmId());
+
+					if (resultList != null && resultList.size() > 0) {
+						SampleSelectionConfiguration obj = resultList.get(0);
+					} else
+						throw new ECDException(
+								"given cycle is not available for the provider, please contact administrator");
+				} else
+					throw new InvalidRequestException("invalid/NULL cycle id : ", "please pass cycle info to get the data");
+
+				// call SP to get work-list data
+				List<String[]> resultSet = agentQualityAuditorMapRepo.getQualityAuditorWorklistDatewise(
+						qualityAuditorWorklistDatewiseRequestDTO.getValidFrom(), qualityAuditorWorklistDatewiseRequestDTO.getValidTill(),
+						qualityAuditorWorklistDatewiseRequestDTO.getPsmId(), qualityAuditorWorklistDatewiseRequestDTO.getLanguageId(),
+						qualityAuditorWorklistDatewiseRequestDTO.getAgentId(), qualityAuditorWorklistDatewiseRequestDTO.getRoleId(),
+						qualityAuditorWorklistDatewiseRequestDTO.isValid());
+						
+
+				if (resultSet != null && resultSet.size() > 0) {
+					for (String[] strings : resultSet) {
+						response = new QualityAuditorWorklistDatewiseResponseDTO();
+						if (strings[0] != null)
+							response.setBeneficiaryid(Long.valueOf(strings[0]));
+						if (strings[1] != null)
+							response.setBeneficiaryname(strings[1]);
+						if (strings[2] != null)
+							response.setPhoneNo(strings[2]);
+						if (strings[3] != null)
+							response.setAgentid(Integer.valueOf(strings[3]));
+						if (strings[4] != null)
+							response.setAgetname(strings[4]);
+						if (strings[5] != null)
+							response.setCalltype(strings[5]);
+						if (strings[6] != null)
+							response.setBenCallID(Long.valueOf(strings[6]));
+						if (strings[7] != null)
+							response.setIsCallAudited(Boolean.valueOf(strings[7]));
+						if (strings[8] != null)
+							response.setOutboundCallType(strings[8]);
+						if (strings[9] != null)
+							response.setRoleID(Integer.valueOf(strings[9]));
+						if (strings[10] != null)
+							response.setRoleName(strings[10]);
+						if (strings[11] != null)
+							response.setCallId(strings[11]);
+
+						responseList.add(response);
+					}
+				}
+
+				return responseList;
+
+			} catch (Exception e) {
+				throw new ECDException(e);
+			}
+		}
 	public List<ResponseCallAuditSectionQuestionMapDTO> getQuestionSectionForCallRatings(Integer psmId) {
 		try {
 

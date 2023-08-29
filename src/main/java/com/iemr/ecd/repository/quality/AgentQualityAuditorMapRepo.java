@@ -50,4 +50,11 @@ public interface AgentQualityAuditorMapRepo extends CrudRepository<AgentQualityA
 	@Query(value = " CALL db_iemr.Pr_BeneficiaryCallResponse(:benCallId) ", nativeQuery = true)
 	public List<String[]> getBeneficiaryCallResponse(@Param("benCallId") Long benCallId);
 
+
+	@Query(value = " CALL Pr_QualityAuditorWorklistDatewise(:validFrom, :validTill,:psmId, :langId, :agentId, :roleId, :isValid ) ", nativeQuery = true)
+	public List<String[]> getQualityAuditorWorklistDatewise(@Param("validFrom") Timestamp validFrom,
+			@Param("validTill") Timestamp validTill, @Param("psmId") Integer psmId, @Param("langId") String string,
+			@Param("agentId") Integer agentId, @Param("roleId") Integer roleId, @Param("isValid") Boolean isValid);
+
+
 }
