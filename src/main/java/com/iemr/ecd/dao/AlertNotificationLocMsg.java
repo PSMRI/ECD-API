@@ -61,8 +61,6 @@ public class AlertNotificationLocMsg {
 	@Column(name = "NotificationDesc")
 	private String message;
 
-//	private String cluster;
-
 	@Column(name = "ProviderServiceMapID")
 	private Integer psmId;
 
@@ -71,7 +69,7 @@ public class AlertNotificationLocMsg {
 
 	@Column(name = "WorkingLocationID")
 	private Integer workingLocationID;
-	
+
 	@Column(name = "WorkingLocationIDS")
 	private String workingLocationIds;
 
@@ -92,11 +90,5 @@ public class AlertNotificationLocMsg {
 
 	@Transient
 	private Integer[] officeId;
-
-	
-	
-	
-	
-	
 
 }
