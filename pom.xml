@@ -17,7 +17,7 @@
 	<description>ECD project</description>
 	<properties>
 		<environment>${ENV_VAR}</environment>
-		<source-properties>src/main/environment/common_${environment}.properties</source-properties>
+		<source-properties>src/main/environment/ecd_${environment}.properties</source-properties>
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
