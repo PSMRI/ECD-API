@@ -2,3 +2,7 @@ mvnw
 mvnw.cmd
 /logs
 mvn/wrapper 
+ /target
+
+ # Properties
+src/main/environment/ecd_local.properties
