@@ -41,15 +41,15 @@ public interface EcdQuestionnaireRepo extends CrudRepository<Questionnaire, Inte
 
 	@Query(value = " select q.* from m_questionnaire q "
 			+ " left join m_sectionqamapping s on s.questionid=q.questionid and s.ProviderServiceMapID=q.ProviderServiceMapID"
-			+ " where q.deleted is false and s.sectionid is null AND q.ProviderServiceMapID =:psmId ORDER BY q.LastModDate DESC", nativeQuery = true)
+			+ " where q.deleted is false and s.sectionid is null AND q.ProviderServiceMapID =:psmId ORDER BY q.lastModDate DESC", nativeQuery = true)
 	public List<Questionnaire> getUnMappedQuestionnairesByPSMId(@Param("psmId") Integer psmId);
 
 	@Query(value = " SELECT q.*\r\n" + "FROM m_questionnaire q\r\n"
 			+ "LEFT JOIN m_sectionqamapping s ON s.questionid = q.questionid AND s.ProviderServiceMapID = q.ProviderServiceMapID\r\n"
 			+ "WHERE q.deleted = false\r\n" + "  AND q.ProviderServiceMapID = :psmId\r\n"
 			+ "  AND q.questionid NOT IN (\r\n" + "    SELECT questionid\r\n" + "    FROM m_sectionqamapping\r\n"
-			+ "    WHERE sectionid = :sectionId\r\n" + "      AND ProviderServiceMapID = q.ProviderServiceMapID\r\n"
-			+ "  ) ", nativeQuery = true)
+			+ "    WHERE sectionid = :sectionId\r\n" + "      AND ProviderServiceMapID = q.ProviderServiceMapID\r\n )"
+			+ " ORDER BY q.lastModDate DESC  ", nativeQuery = true)
 	public List<Questionnaire> getUnMappedQuestionnaires(@Param("psmId") Integer psmId,
 			@Param("sectionId") Integer sectionId);
 }

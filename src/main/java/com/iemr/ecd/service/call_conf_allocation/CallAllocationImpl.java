@@ -38,11 +38,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
+import com.iemr.ecd.dao.CallConfiguration;
 import com.iemr.ecd.dao.associate.ChildRecord;
 import com.iemr.ecd.dao.associate.MotherRecord;
 import com.iemr.ecd.dao.associate.OutboundCalls;
+import com.iemr.ecd.dto.OutboundCallsDTO;
 import com.iemr.ecd.dto.RequestCallAllocationDTO;
 import com.iemr.ecd.dto.supervisor.ResponseEligibleCallRecordsDTO;
+import com.iemr.ecd.repo.call_conf_allocation.CallConfigurationRepo;
 import com.iemr.ecd.repo.call_conf_allocation.ChildRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
@@ -60,6 +63,8 @@ public class CallAllocationImpl {
 	private OutboundCallsRepo outboundCallsRepo;
 	@Autowired
 	private ChildRecordRepo childRecordRepo;
+	@Autowired
+	private CallConfigurationRepo callConfigurationRepo;
 
 	@Transactional(rollbackOn = Exception.class)
 	public String allocateCalls(RequestCallAllocationDTO callAllocationDto) {
@@ -758,5 +763,159 @@ public class CallAllocationImpl {
 			return new Timestamp(cal.getTime().getTime());
 		} else
 			return new Timestamp(System.currentTimeMillis());
+	}
+	
+	@Transactional(rollbackOn = Exception.class)
+	public String insertRecordsInOutboundCalls(OutboundCallsDTO outboundCallsDTO) {
+		try {
+
+			List<CallConfiguration> callConfigurationDetails = callConfigurationRepo
+					.getCallConfiguration(outboundCallsDTO.getPsmId());
+			List<OutboundCalls> resultSet = outboundCallsRepo.getIntroductoryRecordsUser(outboundCallsDTO.getPsmId(),
+					"completed", "introductory");
+
+			if (resultSet != null) {
+				if (callConfigurationDetails != null && callConfigurationDetails.size() > 0) {
+
+					ChildRecord childRecord = null;
+					MotherRecord motherRecord = null;
+					List<OutboundCalls> outboundCallsList = new ArrayList<>();
+					for (OutboundCalls outboundCalls : resultSet) {
+						if (outboundCalls.getChildId() != null) {
+							childRecord = childRecordRepo.findByEcdIdNoChildId(outboundCalls.getChildId());
+
+						} else {
+							if (outboundCalls.getMotherId() != null) {
+								motherRecord = motherRecordRepo.findByEcdIdNo(outboundCalls.getMotherId());
+							} else {
+								throw new InvalidRequestException("Missing RCH Id");
+							}
+						}
+
+						OutboundCalls outboundCallsSet;
+						Timestamp callStartDate = null;
+
+						for (CallConfiguration callConfiguration : callConfigurationDetails) {
+							outboundCallsSet = new OutboundCalls();
+
+							// set object values based on logic
+							if (motherRecord != null && motherRecord.getLmpDate() != null) {
+								if (callConfiguration.getBaseLine().equalsIgnoreCase("DOB"))
+									continue;
+
+								Timestamp callEndDate = null;
+								if (callStartDate == null)
+									callStartDate = motherRecord.getLmpDate();
+								outboundCallsSet.setCallDateFrom(callStartDate);
+
+								if (callConfiguration.getConfigTerms() != null
+										&& callConfiguration.getConfigTerms().equalsIgnoreCase("days")) {
+
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(motherRecord.getLmpDate());
+									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+
+									callEndDate = new Timestamp(cal.getTime().getTime());
+
+								} else if (callConfiguration.getConfigTerms() != null
+										&& callConfiguration.getConfigTerms().equalsIgnoreCase("months")) {
+
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(motherRecord.getLmpDate());
+									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+
+									callEndDate = new Timestamp(cal.getTime().getTime());
+								}
+
+								if (callEndDate != null)
+									outboundCallsSet.setCallDateTo(callEndDate);
+
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(callEndDate);
+								cal.add(Calendar.DAY_OF_WEEK, 1);
+								callStartDate = new Timestamp(cal.getTime().getTime());
+
+							} else if (childRecord != null && childRecord.getDob() != null) {
+								if (callConfiguration.getBaseLine().equalsIgnoreCase("LMP"))
+									continue;
+
+								Timestamp callEndDate = null;
+
+								if (callStartDate == null)
+									callStartDate = childRecord.getDob();
+								outboundCallsSet.setCallDateFrom(callStartDate);
+
+								if (callConfiguration.getConfigTerms() != null
+										&& callConfiguration.getConfigTerms().equalsIgnoreCase("days")) {
+
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(childRecord.getDob());
+									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+
+									callEndDate = new Timestamp(cal.getTime().getTime());
+
+								} else if (callConfiguration.getConfigTerms() != null
+										&& callConfiguration.getConfigTerms().equalsIgnoreCase("months")) {
+
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(childRecord.getDob());
+									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+
+									callEndDate = new Timestamp(cal.getTime().getTime());
+								}
+
+								if (callEndDate != null)
+									outboundCallsSet.setCallDateTo(callEndDate);
+
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(callEndDate);
+								cal.add(Calendar.DAY_OF_WEEK, 1);
+								callStartDate = new Timestamp(cal.getTime().getTime());
+							}
+
+							if (outboundCalls.getPhoneNumberType() != null)
+								outboundCallsSet.setPhoneNumberType(outboundCalls.getPhoneNumberType());
+
+							// from request
+							if (outboundCalls.getBeneficiaryRegId() != null)
+								outboundCallsSet.setBeneficiaryRegId(outboundCalls.getBeneficiaryRegId());
+							if (outboundCalls.getMotherId() != null)
+								outboundCallsSet.setMotherId(outboundCalls.getMotherId());
+							if (outboundCalls.getChildId() != null)
+								outboundCallsSet.setChildId(outboundCalls.getChildId());
+							if (outboundCalls.getPsmId() != null)
+								outboundCallsSet.setPsmId(outboundCalls.getPsmId());
+							if (outboundCalls.getCreatedBy() != null)
+								outboundCallsSet.setCreatedBy(outboundCalls.getCreatedBy());
+							if (outboundCalls.getIsHighRisk() != null)
+								outboundCallsSet.setIsHighRisk(outboundCalls.getIsHighRisk());
+							if (outboundCalls.getIsHrni() != null)
+								outboundCallsSet.setIsHrni(outboundCalls.getIsHrni());
+
+							outboundCallsSet.setCallAttemptNo(0);
+							outboundCallsSet.setCallStatus("open");
+							outboundCallsSet.setAllocationStatus("unallocated");
+
+							// from conf
+							if (callConfiguration.getCallType() != null)
+								outboundCallsSet.setEcdCallType(callConfiguration.getCallType());
+							if (callConfiguration.getDisplayName() != null)
+								outboundCallsSet.setDisplayEcdCallType(callConfiguration.getDisplayName());
+
+							outboundCallsList.add(outboundCallsSet);
+						}
+					}
+					outboundCallsRepo.saveAll(outboundCallsList);
+
+				}
+
+			}
+
+			Map<String, Object> responseMap = new HashMap<>();
+			responseMap.put("response", "records successfully inserted");
+			return new Gson().toJson(responseMap);
+		} catch (Exception e) {
+			throw new ECDException(e);
+		}
 	}
 }

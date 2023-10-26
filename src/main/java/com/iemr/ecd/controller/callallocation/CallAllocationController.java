@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.iemr.ecd.dto.OutboundCallsDTO;
 import com.iemr.ecd.dto.RequestCallAllocationDTO;
 import com.iemr.ecd.dto.supervisor.ResponseEligibleCallRecordsDTO;
 import com.iemr.ecd.service.call_conf_allocation.CallAllocationImpl;
@@ -124,6 +125,20 @@ public class CallAllocationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<String> updateAlerts(@RequestBody RequestCallAllocationDTO callAllocationDto) {
 		return new ResponseEntity<>(callAllocationImpl.moveAllocatedCallsToBin(callAllocationDto), HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/insertRecordsInOutboundCalls", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Insert Records In OutboundCalls", description = "Desc - Insert Records In OutboundCalls")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
+					@Content(mediaType = "application/json") }),
+			@ApiResponse(responseCode = CustomExceptionResponse.NOT_FOUND_SC_V, description = CustomExceptionResponse.NOT_FOUND_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
+			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
+	public ResponseEntity<String> insertRecordsInOutboundCalls(@RequestBody OutboundCallsDTO outboundCallsDTO) {
+		return new ResponseEntity<>(callAllocationImpl.insertRecordsInOutboundCalls(outboundCallsDTO), HttpStatus.OK);
+
 	}
 
 }
