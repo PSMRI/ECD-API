@@ -282,7 +282,10 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " WHERE childId = :childId AND callDateTo>current_date() AND obCallId!=:id")
 	public int stickyChildAgentAllocation(@Param("id") Long id, @Param("childId") Long childId,
 			@Param("userId") Integer userId);
-	
-	
+
+	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.psmId=:psmId AND "
+			+ " t.callStatus=:callStatus AND t.ecdCallType=:ecdCallType AND t.beneficiaryRegId IS NOT NULL")
+	List<OutboundCalls> getIntroductoryRecordsUser(@Param("psmId") Integer psmId,
+			@Param("callStatus") String callStatus, @Param("ecdCallType") String ecdCallType);
 
 }
