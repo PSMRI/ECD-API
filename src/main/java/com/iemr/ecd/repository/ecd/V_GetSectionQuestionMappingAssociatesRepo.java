@@ -28,7 +28,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.iemr.ecd.dao.V_GetSectionQuestionMappingAssociates;
 
 public interface V_GetSectionQuestionMappingAssociatesRepo
-		extends CrudRepository<V_GetSectionQuestionMappingAssociates, Long> {
+		extends CrudRepository<V_GetSectionQuestionMappingAssociates, Integer> {
 	List<V_GetSectionQuestionMappingAssociates> findBySectionid(Integer sectionId);
 
 	List<V_GetSectionQuestionMappingAssociates> findByPsmId(Integer psmId);

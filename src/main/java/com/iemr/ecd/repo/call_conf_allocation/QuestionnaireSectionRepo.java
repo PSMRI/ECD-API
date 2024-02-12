@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.ecd.dao.QuestionnaireSections;
 
 @Repository
-public interface QuestionnaireSectionRepo extends CrudRepository<QuestionnaireSections, Long> {
+public interface QuestionnaireSectionRepo extends CrudRepository<QuestionnaireSections, Integer> {
 
 	List<QuestionnaireSections> findByPsmIdOrderByLastModDateDesc(Integer psmIds);
 	

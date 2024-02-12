@@ -29,7 +29,7 @@ import org.springframework.stereotype.Repository;
 import com.iemr.ecd.dao.QuestionnaireValues;
 
 @Repository
-public interface QuestionnaireValuesRepo extends CrudRepository<QuestionnaireValues, Long> {
+public interface QuestionnaireValuesRepo extends CrudRepository<QuestionnaireValues, Integer> {
 
 	public List<QuestionnaireValues> findByQuestionIdAndDeleted(Integer questionId, Boolean deleted);
 
