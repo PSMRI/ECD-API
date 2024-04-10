@@ -257,7 +257,7 @@ public class CustomExceptionResponse {
 		return builder.create().toJson(this);
 	}
 
-	// public static void main(String[] args) {
+	// public static public void main(String[] args) {
 	// OutputResponse resp = new OutputResponse();
 	// resp.setResponse("{testing: [test]}");
 	// System.out.println(resp.toString());

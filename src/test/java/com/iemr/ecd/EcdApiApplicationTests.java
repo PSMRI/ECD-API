@@ -28,7 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 class EcdApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
 	}
 
 }
