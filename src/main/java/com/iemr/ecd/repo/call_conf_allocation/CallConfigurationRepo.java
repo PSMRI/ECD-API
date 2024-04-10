@@ -42,11 +42,11 @@ public interface CallConfigurationRepo extends CrudRepository<CallConfiguration,
 
 	@Query(" SELECT t FROM CallConfiguration AS t WHERE t.psmId=:psmId "
 			+ " AND t.effectiveStartDate <= current_date() AND t.effectiveEndDate >= current_date() "
-			+ " AND t.callType !='Introductory' AND t.deleted = 0 ")
+			+ " AND t.callType !='Introductory' AND t.deleted = false ")
 	public ArrayList<CallConfiguration> getCallConfiguration(@Param("psmId") Integer psmId);
 
 	@Query(" SELECT t FROM CallConfiguration AS t WHERE t.psmId=:psmId AND t.callType=:callType "
-			+ " AND t.effectiveStartDate <= current_date() AND t.effectiveEndDate >= current_date() AND t.deleted = 0 ")
+			+ " AND t.effectiveStartDate <= current_date() AND t.effectiveEndDate >= current_date() AND t.deleted = false ")
 	public CallConfiguration getCallConfigurationByProviderAndCallType(@Param("psmId") Integer psmId,
 			@Param("callType") String callType);
 
