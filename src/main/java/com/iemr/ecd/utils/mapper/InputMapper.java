@@ -89,7 +89,7 @@ public class InputMapper {
 	 *                   details from the redis 2. IP address in request and the
 	 *                   logged in IP address should be same.
 	 */
-	// private void valildate(String json) throws Exception
+	// private public void valildate(String json) throws Exception
 	// {
 	// Object obj = new JsonParser().parse(json);
 	// try
