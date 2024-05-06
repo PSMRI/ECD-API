@@ -289,5 +289,17 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.callStatus=:callStatus AND t.ecdCallType=:ecdCallType AND t.beneficiaryRegId IS NOT NULL")
 	List<OutboundCalls> getIntroductoryRecordsUser(@Param("psmId") Integer psmId,
 			@Param("callStatus") String callStatus, @Param("ecdCallType") String ecdCallType);
+	
+	
 
+	
+	@Modifying
+	@Transactional
+	@Query(" UPDATE OutboundCalls SET isHrni = :isHrni WHERE childId = :childId AND motherId IS NOT NULL AND callDateTo>current_date()")
+	public int updateHRNIForUpcomingCall(@Param("childId") Long childId, @Param("isHrni") Boolean isHrni);
+	
+	@Modifying
+	@Transactional
+	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
+	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk);
 }
