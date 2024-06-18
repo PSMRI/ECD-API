@@ -50,7 +50,8 @@ public class ReportServiceImpl implements ReportService {
 		String[] headers = { "SNO", "User ID", "Call Time", "District Name", "Health Block Name", "PHC Name",
 				"Sub Centre Name", "Village Name", "Address", "Phone Number", "Mobile Of", "Alternative No", "Husband Name",
 				"Mother Name", "LMP", "EDD/DOB", "Registration No", "Call Category", "Call Status",
-				"Is Verified(Yes/No)", "Is HRP", "HRP Indicators", "Call Duration", "Remarks" };
+				"Is Verified(Yes/No)", "Is HRP", "HRP Indicators", "Call Duration", "Remarks", "Call Answered", 
+				"Is Call Disconnected", "Is Wrong Number" };
 		String[] criteriaColumns = { "Start_Date", "End_Date", "Role", "Agent_ID" };
 		ByteArrayInputStream response = null;
 		List<Object[]> result = null;
@@ -91,7 +92,7 @@ public class ReportServiceImpl implements ReportService {
 				"Number Busy/No reply/Out of Reach/Switched off/Not Connnected",
 				"Invalid Number/Out of order/Wrong number/Other Numbers", "ECD-1", "ECD-2", "ECD-3", "ECD-4", "ECD-5",
 				"ECD-6", "ECD-7", "ECD-8", "ECD-9", "ECD-10", "ECD-11", "ECD-12", "ECD-13", "ECD-14", "ECD-15",
-				"ECD-16", "Miscarriage/Abortion/still birth/Baby died etc" };
+				"ECD-16", "ECD-17", "ECD-18", "ECD-19", "ECD-20", "ECD-21", "Miscarriage/Abortion/still birth/Baby died etc" };
 		String[] criteriaColumns = { "Start_Date", "End_Date", "Role", "Agent_ID" };
 		ByteArrayInputStream response = null;
 		List<Object[]> result = null;
@@ -131,7 +132,7 @@ public class ReportServiceImpl implements ReportService {
 	public ByteArrayInputStream getCumulativeDistrictReport(String request, String filename) throws Exception {
 		String[] headers = { "SNO", "District", "Calls Made", "Answered Call", "Verified Call", "ECD-1", "ECD-2",
 				"ECD-3", "ECD-4", "ECD-5", "ECD-6", "ECD-7", "ECD-8", "ECD-9", "ECD-10", "ECD-11", "ECD-12", "ECD-13",
-				"ECD-14", "ECD-15", "ECD-16" };
+				"ECD-14", "ECD-15", "ECD-16", "ECD-17", "ECD-18", "ECD-19", "ECD-20", "ECD-21" };
 		String[] criteriaColumns = { "Start_Date", "End_Date", "Role", "Agent_ID" };
 		ByteArrayInputStream response = null;
 		List<Object[]> result = null;
@@ -216,7 +217,7 @@ public class ReportServiceImpl implements ReportService {
 		String[] headers = {"Sno", "User ID", "Call Time", "Mother District", "Health Block Name", "PHC Name", 
 				"Sub Center Name", "Village Name", "Address", "Phone Number", "Phone No Of Whom", "Alternative No", "Husband Name", 
 				"Mother_Name", "LMP Date", "EDD/DOB", "RegistrationNO", "CallCategory", "Callstatus", "IsVerified", 
-				"Is HRP", "HRP indicators", "CallDuration", "Remarks", "Total"};
+				"Is HRP", "HRP indicators", "CallDuration", "Remarks", "Total", "Call Answered", "Is Call Disconnected", "Is Wrong Number" };
 		String[] criteriaColumns= {"Start_Date","End_Date","Agent_ID"};
 		ByteArrayInputStream response = null;
 		List<Object[]> result=null;
@@ -765,7 +766,7 @@ public class ReportServiceImpl implements ReportService {
 	@Override
 	public ByteArrayInputStream getBabyDeathReport(String request, String filename) throws Exception {
 		String[] headers = { "SNO", "CALL Date", "Registration No", "PhoneNo of Beneficiary", "MotherName", 
-				"District", "Block", "LMP", "EDD", "Remarks" };
+				"District", "Block", "LMP", "EDD" };
 		String[] criteriaColumns = { "Start_Date", "End_Date", "Role", "Agent_ID" };
 		ByteArrayInputStream response = null;
 		List<Object[]> result = null;
