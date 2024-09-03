@@ -103,7 +103,6 @@ public class BeneficiaryRegistrationServiceImpl {
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 			headers.add("AUTHORIZATION", Authorization);
-		//	String json = new Gson().toJson(request);
 			String json = objectMapper.writeValueAsString(request);
 			
 			HttpEntity<Object> requestObj = new HttpEntity<Object>(json, headers);
