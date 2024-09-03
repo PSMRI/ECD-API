@@ -41,6 +41,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.iemr.ecd.dto.RequestBeneficiaryRegistrationDTO;
 import com.iemr.ecd.repo.call_conf_allocation.ChildRecordRepo;
@@ -67,6 +68,7 @@ public class BeneficiaryRegistrationServiceImpl {
 
 	@Value("${beneficiaryEditUrl}")
 	private String beneficiaryEditUrl;
+	ObjectMapper objectMapper = new ObjectMapper();
 
 	@Transactional(rollbackOn = Exception.class)
 	public String beneficiaryRegistration(RequestBeneficiaryRegistrationDTO request, String Authorization) {
@@ -101,7 +103,8 @@ public class BeneficiaryRegistrationServiceImpl {
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 			headers.add("AUTHORIZATION", Authorization);
-			String json = new Gson().toJson(request);
+		//	String json = new Gson().toJson(request);
+			String json = objectMapper.writeValueAsString(request);
 			
 			HttpEntity<Object> requestObj = new HttpEntity<Object>(json, headers);
 
