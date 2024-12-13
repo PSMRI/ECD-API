@@ -69,17 +69,11 @@ public class JwtAuthenticationUtil {
 			}
 
 			String userId = claims.get("userId", String.class);
-			String tokenUsername = jwtUtil.extractUsername(jwtToken);
 
 			// Fetch user based on userId from the database or cache
 			Users user = userLoginRepo.getUserByUserID(Long.parseLong(userId));
 			if (user == null) {
 				throw new ECDException("Invalid User ID.");
-			}
-
-			// Check if the token's username matches the user retrieved by userId
-			if (!user.getUserName().equalsIgnoreCase(tokenUsername)) {
-				throw new ECDException("JWT token and User ID mismatch.");
 			}
 
 			return true; // Valid userId and JWT token
