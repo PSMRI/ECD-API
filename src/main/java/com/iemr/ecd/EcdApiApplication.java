@@ -24,6 +24,13 @@ package com.iemr.ecd;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import com.iemr.ecd.dao.Users;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -35,6 +42,21 @@ public class EcdApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(EcdApiApplication.class, args);
+	}
+
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
+		template.setConnectionFactory(factory);
+
+		// Use StringRedisSerializer for keys (userId)
+		template.setKeySerializer(new StringRedisSerializer());
+
+		// Use Jackson2JsonRedisSerializer for values (Users objects)
+		Jackson2JsonRedisSerializer<Users> serializer = new Jackson2JsonRedisSerializer<>(Users.class);
+		template.setValueSerializer(serializer);
+
+		return template;
 	}
 
 }

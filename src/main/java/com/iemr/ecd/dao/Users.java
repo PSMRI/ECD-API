@@ -1,7 +1,9 @@
 package com.iemr.ecd.dao;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 
 import jakarta.persistence.Column;
@@ -15,7 +17,8 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "m_user")
-public class Users {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Users implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Expose

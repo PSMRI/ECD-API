@@ -5,12 +5,12 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.iemr.ecd.dao.Users;
-import com.iemr.ecd.repository.ecd.UserLoginRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 
 import io.jsonwebtoken.Claims;
@@ -24,7 +24,7 @@ public class JwtAuthenticationUtil {
 	@Autowired
 	private JwtUtil jwtUtil;
 	@Autowired
-	private UserLoginRepo userLoginRepo;
+	private RedisTemplate<String, Object> redisTemplate;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	public JwtAuthenticationUtil(CookieUtil cookieUtil, JwtUtil jwtUtil) {
@@ -70,10 +70,10 @@ public class JwtAuthenticationUtil {
 
 			String userId = claims.get("userId", String.class);
 
-			// Fetch user based on userId from the database or cache
-			Users user = userLoginRepo.getUserByUserID(Long.parseLong(userId));
+			// Check if user data is present in Redis
+			Users user = getUserFromCache(userId);
 			if (user == null) {
-				throw new ECDException("Invalid User ID.");
+				throw new Exception("Invalid User ID.");
 			}
 
 			return true; // Valid userId and JWT token
@@ -81,5 +81,18 @@ public class JwtAuthenticationUtil {
 			logger.error("Validation failed: " + e.getMessage(), e);
 			throw new Exception("Validation error: " + e.getMessage(), e);
 		}
+	}
+
+	private Users getUserFromCache(String userId) {
+		String redisKey = "user_" + userId; // The Redis key format
+		Users user = (Users) redisTemplate.opsForValue().get(redisKey);
+
+		if (user == null) {
+			logger.warn("User not found in Redis.");
+		} else {
+			logger.info("User fetched successfully from Redis.");
+		}
+
+		return user; // Returns null if not found
 	}
 }
