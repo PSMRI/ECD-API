@@ -50,6 +50,15 @@ To build the ECD module from source, follow these steps:
 
 - Open your browser and navigate to http://localhost:8080/swagger-ui.html#!/
 
+## Filing Issues
+
+If you encounter any issues, bugs, or have feature requests, please file them in the [main AMRIT repository](https://github.com/PSMRI/AMRIT/issues). Centralizing all feedback helps us streamline improvements and address concerns efficiently.  
+
+## Join Our Community
+
+We’d love to have you join our community discussions and get real-time support!  
+Join our [Discord server](https://discord.gg/FVQWsf5ENS) to connect with contributors, ask questions, and stay updated.  
+
 ## Usage
 
 All the features of the ECD module have been exposed as REST endpoints. For detailed information on how to use the service, refer to the SWAGGER API specification.
