@@ -208,7 +208,10 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
-				if(!isLanguageMapped) {
+				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+					callObj.setAllocatedUserId(request.getUserId());
+					callObj.setCallStatus(Constants.OPEN);
+					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}
 				outboundCallsRepo.save(callObj);
@@ -259,6 +262,7 @@ public class CallClosureImpl {
 			}
 			if (null != request.getPreferredLanguage()) {
 				updatePreferredLanguage(request,callObj,isLanguageMapped);
+				
 			}
 			if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
 				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
