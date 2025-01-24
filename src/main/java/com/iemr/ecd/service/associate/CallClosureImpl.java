@@ -209,8 +209,7 @@ public class CallClosureImpl {
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
 				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
-					if(null != request.getUserId())
-						callObj.setAllocatedUserId(request.getUserId());
+					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
@@ -261,10 +260,9 @@ public class CallClosureImpl {
 					outboundCallsRepo.stickyMotherAgentAllocation(request.getObCallId(), request.getMotherId(),
 							request.getUserId());
 			}
-			if (null != request.getPreferredLanguage()) {
-				updatePreferredLanguage(request,callObj,isLanguageMapped);
-				
-			}
+			
+			updatePreferredLanguage(request,callObj,isLanguageMapped);
+			
 			if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
 				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
 					motherRecordRepo.updateCorrectPhoneNumber(request.getCorrectPhoneNumber(), callObj.getMotherId());
@@ -283,23 +281,35 @@ public class CallClosureImpl {
 	}
 
 	private void updatePreferredLanguage(CallClosureDTO request,OutboundCalls callObj,boolean isLanguageMapped) {
-		if (null != request.getPreferredLanguage()) {
+		String preferredLanguage = request.getPreferredLanguage();
+		   if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
+		       return;
+		   }
 		    boolean isMother = callObj.getMotherId() != null;
 		    boolean isChild = callObj.getChildId() != null;
 		    
-		    if (isMother && !isChild) {
-		        motherRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getMotherId());
-		        if (!isLanguageMapped) {
-		            motherRecordRepo.updateAllocatedStatus(false, callObj.getMotherId());
-		        }
-		    }
-		    if (isChild) {
-		        childRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getChildId());
-		        if (!isLanguageMapped) {
-		            childRecordRepo.updateAllocatedStatus(false, callObj.getChildId());
-		        }
-		    }
-		}
+			if (isMother && !isChild) {
+				try {
+					motherRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getMotherId());
+					if (!isLanguageMapped) {
+						motherRecordRepo.updateAllocatedStatus(false, callObj.getMotherId());
+					}
+				} catch (Exception e) {
+					logger.error("Failed to update mother's preferred language", e);
+					throw new ECDException("Failed to update mother's preferred language: " + e.getMessage());
+				}
+			}
+			if (isChild) {
+				try {
+					childRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getChildId());
+					if (!isLanguageMapped) {
+						childRecordRepo.updateAllocatedStatus(false, callObj.getChildId());
+					}
+				} catch (Exception e) {
+					logger.error("Failed to update child's preferred language", e);
+					throw new ECDException("Failed to update child's preferred language: " + e.getMessage());
+				}
+			}
 	}
 
 	private boolean isLanguageMappedWithUser(CallClosureDTO request) {
