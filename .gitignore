@@ -6,4 +6,4 @@ target
 .idea
 .DS_Store
  # Properties
-src/main/environment/ecd_example.properties
+src/main/environment/ecd_local.properties

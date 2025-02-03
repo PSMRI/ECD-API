@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import com.google.gson.Gson;
 import com.iemr.ecd.dao.CallConfiguration;
@@ -41,12 +42,14 @@ import com.iemr.ecd.dao.associate.Bencall;
 import com.iemr.ecd.dao.associate.ChildRecord;
 import com.iemr.ecd.dao.associate.MotherRecord;
 import com.iemr.ecd.dao.associate.OutboundCalls;
+import com.iemr.ecd.dao.masters.V_GetUserlangmapping;
 import com.iemr.ecd.dto.associate.CallClosureDTO;
 import com.iemr.ecd.repo.call_conf_allocation.CallConfigurationRepo;
 import com.iemr.ecd.repo.call_conf_allocation.ChildRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.repository.ecd.BencallRepo;
+import com.iemr.ecd.service.masters.MasterServiceImpl;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
 import com.iemr.ecd.utils.constants.Constants;
@@ -73,6 +76,9 @@ public class CallClosureImpl {
 
 	@Autowired
 	private ChildRecordRepo childRecordRepo;
+	
+	@Autowired
+	private MasterServiceImpl masterServiceImpl;
 
 	@Transactional(rollbackOn = Exception.class)
 	public String closeCall(CallClosureDTO request) {
@@ -129,12 +135,17 @@ public class CallClosureImpl {
 
 				if (request.getIsWrongNumber() != null)
 					obj.setIsWrongNumber(request.getIsWrongNumber());
+				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered())) {
+					obj.setIsFurtherCallRequired(true);
+					obj.setIsCallDisconnected(true);
+				}
 
 				bencallRepo.save(obj);
 			}
 
 			OutboundCalls callObj = outboundCallsRepo.findByObCallId(request.getObCallId());
-
+			boolean isMaxcallsAttempted=false;
+			boolean isLanguageMapped = false;
 			if (callObj != null) {
 
 				callConfigurationDetails = callConfigurationRepo.getCallConfiguration(request.getPsmId());
@@ -162,10 +173,12 @@ public class CallClosureImpl {
 				
 				if (request.getIsHrp() != null) {
 					callObj.setIsHighRisk(request.getIsHrp());
-					if (null != obj.getReceivedRoleName() && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
-							|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
-						callObj.setCallStatus(Constants.OPEN);
-					}
+					/*
+					 * if (null != obj.getReceivedRoleName() &&
+					 * (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) ||
+					 * obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
+					 * callObj.setCallStatus(Constants.OPEN); }
+					 */
 				}
 
 				if (request.getIsHrni() != null) {
@@ -179,6 +192,7 @@ public class CallClosureImpl {
 
 				} else {
 					if ((callObj.getCallAttemptNo() + 1) >= callConfigurationDetail.getNoOfAttempts()) {
+						isMaxcallsAttempted=true;
 						callObj.setCallStatus(Constants.COMPLETED);
 					}
 
@@ -190,7 +204,16 @@ public class CallClosureImpl {
 				} else {
 					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
 				}
-
+				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
+					callObj.setCallStatus(Constants.OPEN);
+				}
+				isLanguageMapped = isLanguageMappedWithUser(request);
+				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+					callObj.setAllocatedUserId(null);
+					callObj.setCallStatus(Constants.OPEN);
+					callObj.setCallAttemptNo(0);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}
 				outboundCallsRepo.save(callObj);
 			} else
 				throw new ECDException(
@@ -208,6 +231,26 @@ public class CallClosureImpl {
 				}
 
 			}
+			if (null != obj.getIsFurtherCallRequired() && !obj.getIsFurtherCallRequired()) {
+				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
+					try {
+						outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForChild(callObj.getChildId(),
+								obj.getIsFurtherCallRequired());
+					} catch (Exception e) {
+						logger.error("Failed to update isFurtherCallRequired for child: " + callObj.getChildId(), e);
+						throw new ECDException("Failed to update isFurtherCallRequired upcoming calls for child" + e);
+					}
+				} else if (callObj.getMotherId() != null && callObj.getChildId() == null) {
+					try {
+						outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForMother(callObj.getMotherId(),
+								obj.getIsFurtherCallRequired());
+					} catch (Exception e) {
+						logger.error("Failed to update isFurtherCallRequired for mother: " + callObj.getMotherId(), e);
+						throw new ECDException("Failed to update isFurtherCallRequired upcoming calls for mother" + e);
+					}
+				}
+			}
+			
 			// sticky agents
 			if (request.getIsStickyAgentRequired() != null && request.getIsStickyAgentRequired()) {
 				if (request.getChildId() != null)
@@ -217,14 +260,9 @@ public class CallClosureImpl {
 					outboundCallsRepo.stickyMotherAgentAllocation(request.getObCallId(), request.getMotherId(),
 							request.getUserId());
 			}
-			if (null != request.getPreferredLanguage()) {
-				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
-					motherRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getMotherId());
-				}
-				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
-					childRecordRepo.updatePreferredLanguage(request.getPreferredLanguage(), callObj.getChildId());
-				}
-			}
+			
+			updatePreferredLanguage(request,callObj,isLanguageMapped);
+			
 			if(!StringUtil.isNullOrEmpty(request.getCorrectPhoneNumber())) {
 				if (null != callObj.getMotherId() && callObj.getChildId() == null) {
 					motherRecordRepo.updateCorrectPhoneNumber(request.getCorrectPhoneNumber(), callObj.getMotherId());
@@ -240,6 +278,53 @@ public class CallClosureImpl {
 			throw new ECDException(e);
 		}
 
+	}
+
+	private void updatePreferredLanguage(CallClosureDTO request,OutboundCalls callObj,boolean isLanguageMapped) {
+		String preferredLanguage = request.getPreferredLanguage();
+		   if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
+		       return;
+		   }
+		    boolean isMother = callObj.getMotherId() != null;
+		    boolean isChild = callObj.getChildId() != null;
+		    
+			if (isMother && !isChild) {
+				try {
+					motherRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getMotherId());
+					if (!isLanguageMapped) {
+						motherRecordRepo.updateAllocatedStatus(false, callObj.getMotherId());
+					}
+				} catch (Exception e) {
+					logger.error("Failed to update mother's preferred language", e);
+					throw new ECDException("Failed to update mother's preferred language: " + e.getMessage());
+				}
+			}
+			if (isChild) {
+				try {
+					childRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getChildId());
+					if (!isLanguageMapped) {
+						childRecordRepo.updateAllocatedStatus(false, callObj.getChildId());
+					}
+				} catch (Exception e) {
+					logger.error("Failed to update child's preferred language", e);
+					throw new ECDException("Failed to update child's preferred language: " + e.getMessage());
+				}
+			}
+	}
+
+	private boolean isLanguageMappedWithUser(CallClosureDTO request) {
+		boolean isLanguageMapped = false;
+		Integer userId = request.getUserId();
+		List<String> language = new ArrayList<>();
+		List<V_GetUserlangmapping> languageByUserId = masterServiceImpl.getLanguageByUserId(userId);
+		for (V_GetUserlangmapping v_GetUserlangmapping : languageByUserId) {
+			String languageName = v_GetUserlangmapping.getLanguageName();
+			language.add(languageName);
+		}
+		if(!ObjectUtils.isEmpty(language)) {
+			isLanguageMapped = language.contains(request.getPreferredLanguage());
+		}
+		return isLanguageMapped;
 	}
 
 	private String calculateCallDuration(Timestamp CallStartTime, Timestamp CallEndTime) throws Exception {
