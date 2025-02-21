@@ -82,9 +82,6 @@ public class HttpInterceptor implements HandlerInterceptor {
 					break;
 				default:
 					logger.debug("RequestURI::" + request.getRequestURI() + " || Authorization ::" + authorization);
-					if (authorization == null)
-						throw new Exception(
-								"Authorization key is NULL, please pass valid session key to proceed further. ");
 					break;
 					
 				}

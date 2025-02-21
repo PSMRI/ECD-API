@@ -91,4 +91,19 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 	@Query(" UPDATE MotherRecord SET isAllocated = false WHERE ecdIdNo IN :motherId ")
 	public int updateIsAllocatedFalse(@Param("motherId") List<Long> motherId);
 
+	@Modifying
+	@Transactional
+	@Query(" UPDATE MotherRecord SET preferredLanguage = :preferredLanguage WHERE ecdIdNo = :motherId ")
+	public void updatePreferredLanguage(@Param("preferredLanguage") String preferredLanguage,@Param("motherId") Long motherId);
+
+	@Modifying
+	@Transactional
+	@Query(" UPDATE MotherRecord SET phoneNo = :correctPhoneNumber WHERE ecdIdNo = :motherId ")
+	public void updateCorrectPhoneNumber(@Param("correctPhoneNumber") String correctPhoneNumber, @Param("motherId") Long motherId);
+
+	@Modifying
+	@Transactional
+	@Query(" UPDATE MotherRecord SET isAllocated = :isAllocated WHERE ecdIdNo = :motherId ")
+	public void updateAllocatedStatus(@Param("isAllocated") Boolean isAllocated, @Param("motherId") Long motherId);
+
 }
