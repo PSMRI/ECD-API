@@ -40,6 +40,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -48,7 +50,9 @@ import com.iemr.ecd.repo.call_conf_allocation.ChildRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
+import com.iemr.ecd.utils.mapper.CookieUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -69,6 +73,8 @@ public class BeneficiaryRegistrationServiceImpl {
 	@Value("${beneficiaryEditUrl}")
 	private String beneficiaryEditUrl;
 	ObjectMapper objectMapper = new ObjectMapper();
+	@Autowired
+	private CookieUtil cookieUtil;
 
 	@Transactional(rollbackOn = Exception.class)
 	public String beneficiaryRegistration(RequestBeneficiaryRegistrationDTO request, String Authorization) {
@@ -100,11 +106,15 @@ public class BeneficiaryRegistrationServiceImpl {
 //				request.setEdd(getTimestampFromString(request.getEddStr()));
 
 			RestTemplate restTemplate = new RestTemplate();
+			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+					.getRequest();
+			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 			headers.add("AUTHORIZATION", Authorization);
+			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 			String json = objectMapper.writeValueAsString(request);
-			
+
 			HttpEntity<Object> requestObj = new HttpEntity<Object>(json, headers);
 
 			ResponseEntity<String> response = restTemplate.exchange(registerBeneficiaryUrl, HttpMethod.POST, requestObj,
@@ -174,9 +184,13 @@ public class BeneficiaryRegistrationServiceImpl {
 			}
 
 			RestTemplate restTemplate = new RestTemplate();
+			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+					.getRequest();
+			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
 			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
 			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
 			headers.add("AUTHORIZATION", Authorization);
+			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 			HttpEntity<Object> requestObj = new HttpEntity<Object>(request, headers);
 			ResponseEntity<String> response = restTemplate.exchange(beneficiaryEditUrl, HttpMethod.POST, requestObj,
 					String.class);
