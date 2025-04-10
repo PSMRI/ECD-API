@@ -67,9 +67,8 @@ public class OutBoundWorklistController {
 		List<FetchMotherOutboundWorklist> motherWorkList = outboundWorkListServiceImpl.getMotherWorkList(userId);
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-		String writeValueAsString = objectMapper.writeValueAsString(motherWorkList);
-		
-		return  new ResponseEntity<>(writeValueAsString,HttpStatus.OK);
+		String resp = objectMapper.writeValueAsString(motherWorkList);
+		return  new ResponseEntity<>(resp,HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/get-child-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
