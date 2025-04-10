@@ -173,16 +173,6 @@ public class CallClosureImpl {
 
 				}
 				
-				if (request.getIsHrp() != null) {
-					callObj.setIsHighRisk(request.getIsHrp());
-					/*
-					 * if (null != obj.getReceivedRoleName() &&
-					 * (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) ||
-					 * obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
-					 * callObj.setCallStatus(Constants.OPEN); }
-					 */
-				}
-
 				if (request.getIsHrni() != null) {
 					callObj.setIsHrni(request.getIsHrni());
 				}
@@ -215,6 +205,12 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}
+				if (request.getIsHrp() != null) {
+					callObj.setIsHighRisk(request.getIsHrp());
+					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
+						callObj.setCallStatus(Constants.OPEN);
+					}
 				}
 				outboundCallsRepo.save(callObj);
 			} else
