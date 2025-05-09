@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.iemr.ecd.dao.CallConfiguration;
@@ -156,20 +157,20 @@ public class CallClosureImpl {
 					callConfigurationDetail = callConfigurationDetails.get(0);
 				}
 
-				if (callObj.getEcdCallType().equalsIgnoreCase("introductory") && obj.getIsCallDisconnected() && null != request.getPreferredLanguage()) {
+				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
-				}else if(obj.getIsCallAnswered() != null && obj.getIsCallAnswered()){
-					callObj.setCallStatus("Completed");
+				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
+					callObj.setCallStatus(Constants.COMPLETED);
 				}
 
 				if (obj.getIsFurtherCallRequired() != null && !obj.getIsFurtherCallRequired()) {
-					callObj.setCallStatus("Completed");
+					callObj.setCallStatus(Constants.COMPLETED);
 				} else {
 					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
-						callObj.setCallStatus("Open");
+						callObj.setCallStatus(Constants.OPEN);
 					} else {
-						callObj.setCallStatus("Completed");
+						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
 								callObj.getPhoneNumberType());
 					}

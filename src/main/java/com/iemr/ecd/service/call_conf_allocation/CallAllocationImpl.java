@@ -97,119 +97,107 @@ public class CallAllocationImpl {
 
 	}
 
+	
 	private String allocateMotherRecordsAssociates(RequestCallAllocationDTO callAllocationDto) throws ParseException {
-		List<OutboundCalls> outBoundCallList = new ArrayList<>();
-		int totalRecordToAllocate = 0;
-		if (callAllocationDto != null && callAllocationDto.getToUserIds() != null
-				&& callAllocationDto.getToUserIds().length > 0 && callAllocationDto.getNoOfCalls() > 0)
-			totalRecordToAllocate = (callAllocationDto.getToUserIds().length) * (callAllocationDto.getNoOfCalls());
-		else
-			throw new InvalidRequestException();
+	    if (callAllocationDto == null || callAllocationDto.getToUserIds() == null || 
+	        callAllocationDto.getToUserIds().length == 0 || callAllocationDto.getNoOfCalls() <= 0) {
+	        throw new InvalidRequestException();
+	    }
 
-		if (totalRecordToAllocate <= 0)
-			throw new InvalidRequestException();
-		else {
+	    int totalRecordToAllocate = callAllocationDto.getToUserIds().length * callAllocationDto.getNoOfCalls();
 
-			Timestamp tempFDateStamp = null;
-			Timestamp tempTDateStamp = null;
-			if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
-				tempFDateStamp = getTimestampFromString(
-						callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
-				tempTDateStamp = getTimestampFromString(
-						callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
-			} else
-				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
-			List<MotherRecord> resultSet = null;
-			Page<OutboundCalls> motherRecordsForAssociate = null;
-			Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
-			if(null != callAllocationDto.getPreferredLanguage()) {
-				 motherRecordsForAssociate = outboundCallsRepo.getMotherRecordsForAssociate(pageable,"unallocated",
-						callAllocationDto.getPsmId(), tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
-			}else {
-				resultSet = motherRecordRepo.getMotherRecordForAllocation(tempFDateStamp, tempTDateStamp,
-						callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
-			}
-			OutboundCalls outboundCalls;
+	    if (totalRecordToAllocate <= 0) {
+	        throw new InvalidRequestException();
+	    }
 
-			int callCountPointer = 0;
-			if (resultSet != null && resultSet.size() > 0) {
-				List<Long> motherIds = new ArrayList<>();
-				for (MotherRecord motherRecord : resultSet) {
-					try {
+	    if (callAllocationDto.getFDate() == null || callAllocationDto.getTDate() == null) {
+	        throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
+	    }
 
-						outboundCalls = new OutboundCalls();
+	    Timestamp fromDate = getTimestampFromString(
+	        callAllocationDto.getFDate().split(Constants.T)[0] + Constants.TIME_FORMAT_START_TIME);
+	    Timestamp toDate = getTimestampFromString(
+	        callAllocationDto.getTDate().split(Constants.T)[0] + Constants.TIME_FORMAT_END_TIME);
 
-						if (motherRecord.getEcdIdNo() != null)
-							outboundCalls.setMotherId(motherRecord.getEcdIdNo());
-						if (motherRecord.getBeneficiaryRegID() != null)
-							outboundCalls.setBeneficiaryRegId(motherRecord.getBeneficiaryRegID());
-						if (callAllocationDto.getPsmId() != null)
-							outboundCalls.setPsmId(callAllocationDto.getPsmId());
+	    List<OutboundCalls> outBoundCallList = new ArrayList<>();
+	    int callCountPointer = 0;
 
-						if (motherRecord.getWhomPhoneNo() != null)
-							outboundCalls.setPhoneNumberType(motherRecord.getWhomPhoneNo());
+	    if (callAllocationDto.getPreferredLanguage() != null) {
+	        Page<OutboundCalls> page = outboundCallsRepo.getMotherRecordsForAssociate(
+	            PageRequest.of(0, totalRecordToAllocate),
+	            "unallocated",
+	            callAllocationDto.getPsmId(),
+	            fromDate,
+	            toDate,
+	            callAllocationDto.getPreferredLanguage()
+	        );
 
-						outboundCalls.setEcdCallType("introductory");
-						outboundCalls.setDisplayEcdCallType("introductory");
-						outboundCalls.setCallStatus("Open");
-						outboundCalls.setAllocationStatus(Constants.ALLOCATED);
-						outboundCalls.setAllocatedUserId(
-								callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
+	        if (page == null || page.isEmpty()) {
+	            throw new ECDException("No eligible record available to allocate, please contact administrator");
+	        }
 
-						outboundCalls.setCreatedBy(callAllocationDto.getCreatedBy());
-						if (motherRecord.getHighRisk() != null)
-							outboundCalls.setIsHighRisk(motherRecord.getHighRisk());
+	        outBoundCallList = page.getContent();
+	        for (OutboundCalls call : outBoundCallList) {
+	            try {
+	                call.setAllocationStatus(Constants.ALLOCATED);
+	                call.setAllocatedUserId(callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
+	                call.setCallAttemptNo(0);
+	                callCountPointer++;
+	            } catch (Exception e) {
+	                callCountPointer++;
+	            }
+	        }
 
-						if (motherRecord.getHighRiskReason() != null)
-							outboundCalls.setHighRiskReason(motherRecord.getHighRiskReason());
+	    } else {
+	        List<MotherRecord> motherRecords = motherRecordRepo.getMotherRecordForAllocation(
+	            fromDate, toDate, callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
 
-						if (motherRecord.getCreatedDate() != null)
-							outboundCalls.setCallDateFrom(getTimestampDaysLater(motherRecord.getCreatedDate(), 0));
+	        if (motherRecords == null || motherRecords.isEmpty()) {
+	            throw new ECDException("No eligible record available to allocate, please contact administrator");
+	        }
 
-						outboundCalls.setCallDateTo(getTimestampDaysLater(motherRecord.getCreatedDate(), 30));
+	        List<Long> motherIds = new ArrayList<>();
+	        for (MotherRecord mr : motherRecords) {
+	            try {
+	                OutboundCalls call = new OutboundCalls();
+	                call.setMotherId(mr.getEcdIdNo());
+	                call.setBeneficiaryRegId(mr.getBeneficiaryRegID());
+	                call.setPsmId(callAllocationDto.getPsmId());
+	                call.setPhoneNumberType(mr.getWhomPhoneNo());
+	                call.setEcdCallType("introductory");
+	                call.setDisplayEcdCallType("introductory");
+	                call.setCallStatus("Open");
+	                call.setAllocationStatus(Constants.ALLOCATED);
+	                call.setAllocatedUserId(callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
+	                call.setCreatedBy(callAllocationDto.getCreatedBy());
+	                call.setIsHighRisk(mr.getHighRisk());
+	                call.setHighRiskReason(mr.getHighRiskReason());
+	                call.setCallDateFrom(getTimestampDaysLater(mr.getCreatedDate(), 0));
+	                call.setCallDateTo(getTimestampDaysLater(mr.getCreatedDate(), 30));
+	                call.setCallAttemptNo(0);
 
-						outboundCalls.setCallAttemptNo(0);
+	                outBoundCallList.add(call);
+	                motherIds.add(mr.getEcdIdNo());
 
-						outBoundCallList.add(outboundCalls);
+	                callCountPointer++;
+	            } catch (Exception e) {
+	                callCountPointer++;
+	            }
+	        }
 
-						callCountPointer++;
+	        outboundCallsRepo.saveAll(outBoundCallList);
+	        motherRecordRepo.updateIsAllocatedStatus(motherIds);
+	        // Assuming updateIsAllocatedStatus updates all in one batch
+	    }
 
-						motherIds.add(motherRecord.getEcdIdNo());
-					} catch (Exception e) {
-						// log
-						callCountPointer++;
-					}
-				}
-				outboundCallsRepo.saveAll(outBoundCallList);
+	    outboundCallsRepo.saveAll(outBoundCallList);
 
-				int i = motherRecordRepo.updateIsAllocatedStatus(motherIds);
+	    Map<String, Object> responseMap = new HashMap<>();
+	    responseMap.put("response", outBoundCallList.size() + " mother record(s) allocated successfully");
 
-			}else if(null != motherRecordsForAssociate) {
-				outBoundCallList = motherRecordsForAssociate.getContent();
-
-				if (!outBoundCallList.isEmpty()) {
-					for (OutboundCalls outboundCall : outBoundCallList) {
-						try {
-							outboundCall.setAllocationStatus(Constants.ALLOCATED);
-							outboundCall.setAllocatedUserId(
-									callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
-
-							outboundCall.setCallAttemptNo(0);
-
-							callCountPointer++;
-						} catch (Exception e) {
-							callCountPointer++;
-						}
-					}
-					outboundCallsRepo.saveAll(outBoundCallList);
-				}
-			}else
-				throw new ECDException("no eligible record available to allocate, please contact administrator");
-		}
-		Map<String, Object> responseMap = new HashMap<>();
-		responseMap.put("response", outBoundCallList.size() + " mother record allocated successfully");
-		return new Gson().toJson(responseMap);
+	    return new Gson().toJson(responseMap);
 	}
+
 
 	private String allocateChildRecordsAssociates(RequestCallAllocationDTO callAllocationDto) throws ParseException {
 		List<OutboundCalls> outBoundCallList = new ArrayList<>();
@@ -747,7 +735,7 @@ public class CallAllocationImpl {
 								tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType(),callAllocationDto.getPreferredLanguage());
 					}else if(null != callAllocationDto.getRoleName() && callAllocationDto.getRoleName().equalsIgnoreCase(Constants.ASSOCIATE)){
 						if(null != callAllocationDto.getPreferredLanguage()) {
-							cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUserAssociate(callAllocationDto.getUserId(),
+							cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUserAssociateWithPreferredLanguage(callAllocationDto.getUserId(),
 									tempFDateStamp, tempTDateStamp, Constants.OPEN, callAllocationDto.getPhoneNoType(),callAllocationDto.getPreferredLanguage());
 						}else {
 							cnt = outboundCallsRepo.getAllocatedRecordsCountMotherUserAssociate(callAllocationDto.getUserId(),
