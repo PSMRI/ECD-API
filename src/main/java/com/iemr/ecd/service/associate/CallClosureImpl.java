@@ -156,7 +156,10 @@ public class CallClosureImpl {
 					callConfigurationDetail = callConfigurationDetails.get(0);
 				}
 
-				if (obj.getIsCallAnswered() != null && obj.getIsCallAnswered()) {
+				if (callObj.getEcdCallType().equalsIgnoreCase("introductory") && obj.getIsCallDisconnected() && null != request.getPreferredLanguage()) {
+					callObj.setCallStatus(Constants.OPEN);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}else if(obj.getIsCallAnswered() != null && obj.getIsCallAnswered()){
 					callObj.setCallStatus("Completed");
 				}
 
@@ -210,6 +213,9 @@ public class CallClosureImpl {
 					callObj.setIsHighRisk(request.getIsHrp());
 					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
 						callObj.setCallStatus(Constants.OPEN);
+						callObj.setAllocatedUserId(null);
+						callObj.setAllocationStatus(Constants.UNALLOCATED);
+						callObj.setCallAttemptNo(0);
 					}
 				}
 				outboundCallsRepo.save(callObj);
