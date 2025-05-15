@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.iemr.ecd</groupId>
 	<artifactId>ecd-api</artifactId>
-	<version>0.0.1</version>
+	<version>3.1.0</version>
 	<packaging>war</packaging>
 	<name>ecd-api</name>
 	<description>ECD project</description>
@@ -249,7 +249,7 @@
 
 
 	<build>
-		<finalName>ecdapi-v3.0.0</finalName>
+		<finalName>${artifactId}-${version}</finalName>
 		<plugins>
 
 			<plugin>
