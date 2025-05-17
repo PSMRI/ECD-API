@@ -336,6 +336,20 @@
 							</target>
 						</configuration>
 					</execution>
+					<execution>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<id>clean-property-files</id>
+						<configuration>
+							<target>
+								<delete>
+									<file file="${source-properties}" />
+								</delete>
+							</target>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 
