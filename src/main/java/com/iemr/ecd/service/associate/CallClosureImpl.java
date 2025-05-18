@@ -22,10 +22,12 @@
 package com.iemr.ecd.service.associate;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.iemr.ecd.dao.CallConfiguration;
@@ -154,33 +157,26 @@ public class CallClosureImpl {
 					callConfigurationDetail = callConfigurationDetails.get(0);
 				}
 
-				if (obj.getIsCallAnswered() != null && obj.getIsCallAnswered()) {
-					callObj.setCallStatus("Completed");
+				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
+					callObj.setCallStatus(Constants.OPEN);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
+					callObj.setCallStatus(Constants.COMPLETED);
 				}
 
 				if (obj.getIsFurtherCallRequired() != null && !obj.getIsFurtherCallRequired()) {
-					callObj.setCallStatus("Completed");
+					callObj.setCallStatus(Constants.COMPLETED);
 				} else {
 					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
-						callObj.setCallStatus("Open");
+						callObj.setCallStatus(Constants.OPEN);
 					} else {
-						callObj.setCallStatus("Completed");
+						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
 								callObj.getPhoneNumberType());
 					}
 
 				}
 				
-				if (request.getIsHrp() != null) {
-					callObj.setIsHighRisk(request.getIsHrp());
-					/*
-					 * if (null != obj.getReceivedRoleName() &&
-					 * (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) ||
-					 * obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
-					 * callObj.setCallStatus(Constants.OPEN); }
-					 */
-				}
-
 				if (request.getIsHrni() != null) {
 					callObj.setIsHrni(request.getIsHrni());
 				}
@@ -213,6 +209,15 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}
+				if (request.getIsHrp() != null) {
+					callObj.setIsHighRisk(request.getIsHrp());
+					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
+						callObj.setCallStatus(Constants.OPEN);
+						callObj.setAllocatedUserId(null);
+						callObj.setAllocationStatus(Constants.UNALLOCATED);
+						callObj.setCallAttemptNo(0);
+					}
 				}
 				outboundCallsRepo.save(callObj);
 			} else
@@ -401,8 +406,10 @@ public class CallClosureImpl {
 								continue;
 
 							Timestamp callEndDate = null;
-							if (callStartDate == null)
-								callStartDate = motherRecord.getLmpDate();
+							if (callStartDate == null) {
+								callStartDate = getCallDateStartFormat(motherRecord.getLmpDate());
+							}
+							callStartDate = getCallDateStartFormat(callStartDate);
 							outboundCalls.setCallDateFrom(callStartDate);
 
 							if (callConfiguration.getConfigTerms() != null
@@ -411,8 +418,7 @@ public class CallClosureImpl {
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
 								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
-
-								callEndDate = new Timestamp(cal.getTime().getTime());
+								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
 									&& callConfiguration.getConfigTerms().equalsIgnoreCase("months")) {
@@ -420,8 +426,7 @@ public class CallClosureImpl {
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
 								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
-
-								callEndDate = new Timestamp(cal.getTime().getTime());
+								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
 							if (callEndDate != null)
@@ -430,7 +435,7 @@ public class CallClosureImpl {
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
 							cal.add(Calendar.DAY_OF_WEEK, 1);
-							callStartDate = new Timestamp(cal.getTime().getTime());
+							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 
 						} else if (childRecord != null && childRecord.getDob() != null) {
 							if (callConfiguration.getBaseLine().equalsIgnoreCase("LMP"))
@@ -438,8 +443,10 @@ public class CallClosureImpl {
 
 							Timestamp callEndDate = null;
 
-							if (callStartDate == null)
+							if (callStartDate == null) {
 								callStartDate = childRecord.getDob();
+								callStartDate = getCallDateStartFormat(callStartDate);
+							}
 							outboundCalls.setCallDateFrom(callStartDate);
 
 							if (callConfiguration.getConfigTerms() != null
@@ -448,8 +455,7 @@ public class CallClosureImpl {
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
 								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
-
-								callEndDate = new Timestamp(cal.getTime().getTime());
+								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
 									&& callConfiguration.getConfigTerms().equalsIgnoreCase("months")) {
@@ -457,8 +463,7 @@ public class CallClosureImpl {
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
 								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
-
-								callEndDate = new Timestamp(cal.getTime().getTime());
+								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
 							if (callEndDate != null)
@@ -467,11 +472,9 @@ public class CallClosureImpl {
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
 							cal.add(Calendar.DAY_OF_WEEK, 1);
-							callStartDate = new Timestamp(cal.getTime().getTime());
+							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 						}
-
 						outboundCalls.setPhoneNumberType(phoneNoType);
-
 						// from request
 						if (request.getBeneficiaryRegId() != null)
 							outboundCalls.setBeneficiaryRegId(request.getBeneficiaryRegId());
@@ -501,15 +504,24 @@ public class CallClosureImpl {
 						outboundCallsList.add(outboundCalls);
 					}
 					outboundCallsRepo.saveAll(outboundCallsList);
-
 				}
-
 			}
-
 			return "created";
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}
+	}
+
+	private Timestamp getCallDateEndFormat(Timestamp callEndDate) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd 23:59:59");
+		String time = format.format(callEndDate);
+		return Timestamp.valueOf(time);
+	}
+
+	private Timestamp getCallDateStartFormat(Timestamp callStartDate) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd 00:00:00");
+		String time = format.format(callStartDate);
+		return Timestamp.valueOf(time);
 	}
 
 }

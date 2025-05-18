@@ -21,6 +21,7 @@
 */
 package com.iemr.ecd.controller.outboundworklist;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iemr.ecd.dao_temp.FetchChildOutboundWorklist;
 import com.iemr.ecd.dao_temp.FetchMotherOutboundWorklist;
 import com.iemr.ecd.service.outbound_worklist.OutboundWorkListServiceImpl;
@@ -60,8 +63,12 @@ public class OutBoundWorklistController {
 			@ApiResponse(responseCode = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC_V, description = CustomExceptionResponse.INTERNAL_SERVER_ERROR_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.DB_EXCEPTION_SC_V, description = CustomExceptionResponse.DB_EXCEPTION_SC),
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
-	public ResponseEntity<List<FetchMotherOutboundWorklist>> getMotherWorklist(@PathVariable int userId) {
-		return new ResponseEntity<>(outboundWorkListServiceImpl.getMotherWorkList(userId), HttpStatus.OK);
+	public ResponseEntity<String> getMotherWorklist(@PathVariable int userId) throws JsonProcessingException {
+		List<FetchMotherOutboundWorklist> motherWorkList = outboundWorkListServiceImpl.getMotherWorkList(userId);
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+		String resp = objectMapper.writeValueAsString(motherWorkList);
+		return  new ResponseEntity<>(resp,HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/get-child-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)

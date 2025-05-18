@@ -46,11 +46,17 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 			String phoneType, Timestamp fromDate, Timestamp toDate);
 
 	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
+			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType AND preferredLanguage = :preferredLanguage LIMIT :recordLimit ", nativeQuery = true)
+	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
+			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
+			@Param("recordLimit") int recordLimit, @Param("preferredLanguage") String preferredLanguage);
+
+	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
 			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType LIMIT :recordLimit ", nativeQuery = true)
 	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit);
-
+	
 	@Modifying
 	@Transactional
 	@Query(" UPDATE MotherRecord SET isAllocated = true WHERE ecdIdNo IN :motherId ")
