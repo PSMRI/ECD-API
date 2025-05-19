@@ -222,7 +222,6 @@ public class CallClosureImpl {
 				        callObj.setAllocatedUserId(null);
 				        callObj.setAllocationStatus(Constants.UNALLOCATED);
 				        callObj.setCallAttemptNo(0);
-				      //  callObj.setRole(Constants.MO);
 				    }
 				}
 
