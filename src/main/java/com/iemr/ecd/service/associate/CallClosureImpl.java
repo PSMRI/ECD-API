@@ -210,15 +210,31 @@ public class CallClosureImpl {
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}
+//				if (request.getIsHrp() != null) {
+//					callObj.setIsHighRisk(request.getIsHrp());
+//					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
+//						callObj.setCallStatus(Constants.OPEN);
+//						callObj.setAllocatedUserId(null);
+//						callObj.setAllocationStatus(Constants.UNALLOCATED);
+//						callObj.setCallAttemptNo(0);
+//					}
+//				}
+				
 				if (request.getIsHrp() != null) {
-					callObj.setIsHighRisk(request.getIsHrp());
-					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
-						callObj.setCallStatus(Constants.OPEN);
-						callObj.setAllocatedUserId(null);
-						callObj.setAllocationStatus(Constants.UNALLOCATED);
-						callObj.setCallAttemptNo(0);
-					}
+				    boolean isHrp = request.getIsHrp();
+			        callObj.setIsHighRisk(isHrp);
+
+				    // Check if the role should be changed to MO
+				    if (isHrp && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				      //  callObj.setRole(Constants.MO);
+				    }
 				}
+
+				
 				outboundCallsRepo.save(callObj);
 			} else
 				throw new ECDException(
