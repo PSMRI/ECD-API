@@ -582,103 +582,216 @@ public class CallAllocationImpl {
 
 	}
 
+//	@Transactional(rollbackOn = Exception.class)
+//	public String moveAllocatedCallsToBin(RequestCallAllocationDTO callAllocationDto) {
+//		try {
+//			if (callAllocationDto.getUserId() != null && callAllocationDto.getNoOfCalls() != null
+//					&& callAllocationDto.getRecordType() != null && callAllocationDto.getPhoneNoType() != null
+//					&& callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
+//
+//				Timestamp tempFDateStamp = null;
+//				Timestamp tempTDateStamp = null;
+//				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
+//					tempFDateStamp = getTimestampFromString(
+//							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+//					tempTDateStamp = getTimestampFromString(
+//							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
+//				} else
+//					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
+//
+//				Pageable pageable = PageRequest.of(0, callAllocationDto.getNoOfCalls());
+//
+//				Page<OutboundCalls> outboundCallsPage = null;
+//
+//				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
+//					if (null != callAllocationDto.getRoleName()
+//							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+//						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+//								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+//								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+//					} else if(null != callAllocationDto.getRoleName()
+//							&& callAllocationDto.getRoleName().equalsIgnoreCase("associate")){
+//						outboundCallsPage = getOutboundCallsForMotherAssociate(pageable,callAllocationDto,tempFDateStamp,tempTDateStamp);
+//						
+//					}
+//					else {
+//						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
+//								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+//								tempFDateStamp, tempTDateStamp);
+//					}
+//				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
+//					if (null != callAllocationDto.getRoleName()
+//							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+//						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(
+//								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+//								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+//					}else if(null != callAllocationDto.getRoleName()
+//							&& callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
+//						outboundCallsPage = getOutboundcallsForChildAssociate(pageable,callAllocationDto,tempFDateStamp,tempTDateStamp);
+//					}
+//					else {
+//						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
+//								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+//								tempFDateStamp, tempTDateStamp);
+//					}
+//				}
+//
+//				List<Long> motherIds = new ArrayList<>();
+//				List<Long> childIds = new ArrayList<>();
+//
+//				if (outboundCallsPage != null && outboundCallsPage.getSize() > 0) {
+//					List<OutboundCalls> resultList = outboundCallsPage.getContent();
+//					for (OutboundCalls outboundCalls : resultList) {
+//
+//						outboundCalls.setAllocatedUserId(null);
+//						outboundCalls.setAllocationStatus("unallocated");
+//
+//						if (outboundCalls.getEcdCallType() != null
+//								&& outboundCalls.getEcdCallType().equalsIgnoreCase("introductory")) {
+//							outboundCalls.setDeleted(true);
+//							// write logic to update in mother or child table also - isAllocated = false
+//							if (outboundCalls.getChildId() != null)
+//								childIds.add(outboundCalls.getChildId());
+//							else if (outboundCalls.getMotherId() != null)
+//								motherIds.add(outboundCalls.getMotherId());
+//
+//						}
+//
+//					}
+//
+//					outboundCallsRepo.saveAll(resultList);
+//
+//					if (motherIds.size() > 0)
+//						motherRecordRepo.updateIsAllocatedFalse(motherIds);
+//					if (childIds.size() > 0)
+//						childRecordRepo.updateIsAllocatedFalse(childIds);
+//				} else
+//					throw new ECDException("no record available for move to bin. please contact administrator");
+//			} else
+//				throw new InvalidRequestException(callAllocationDto.toString(),
+//						"NULL or part of required request is NULL");
+//
+//			Map<String, Object> responseMap = new HashMap<>();
+//			responseMap.put("response", "records successfully moved to bin");
+//			return new Gson().toJson(responseMap);
+//		} catch (Exception e) {
+//			throw new ECDException(e);
+//		}
+//
+//	}
+	
 	@Transactional(rollbackOn = Exception.class)
 	public String moveAllocatedCallsToBin(RequestCallAllocationDTO callAllocationDto) {
-		try {
-			if (callAllocationDto.getUserId() != null && callAllocationDto.getNoOfCalls() != null
-					&& callAllocationDto.getRecordType() != null && callAllocationDto.getPhoneNoType() != null
-					&& callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
+	    try {
+	        // Check if all required parameters are present
+	        if (callAllocationDto.getUserId() != null && callAllocationDto.getNoOfCalls() != null
+	                && callAllocationDto.getRecordType() != null && callAllocationDto.getPhoneNoType() != null
+	                && callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
 
-				Timestamp tempFDateStamp = null;
-				Timestamp tempTDateStamp = null;
-				if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
-					tempFDateStamp = getTimestampFromString(
-							callAllocationDto.getFDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
-					tempTDateStamp = getTimestampFromString(
-							callAllocationDto.getTDate().split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
-				} else
-					throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
+	            // Convert from date and to date to timestamps
+	            Timestamp tempFDateStamp = null;
+	            Timestamp tempTDateStamp = null;
+	            if (callAllocationDto.getFDate() != null && callAllocationDto.getTDate() != null) {
+	                tempFDateStamp = getTimestampFromString(
+	                        callAllocationDto.getFDate().split("T")[0].concat("T00:00:00+05:30"));
+	                tempTDateStamp = getTimestampFromString(
+	                        callAllocationDto.getTDate().split("T")[0].concat("T23:59:59+05:30"));
+	            } else
+	                throw new InvalidRequestException("from date / to date is null");
 
-				Pageable pageable = PageRequest.of(0, callAllocationDto.getNoOfCalls());
+	            Pageable pageable = PageRequest.of(0, callAllocationDto.getNoOfCalls());
 
-				Page<OutboundCalls> outboundCallsPage = null;
+	            Page<OutboundCalls> outboundCallsPage = null;
 
-				if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
-					if (null != callAllocationDto.getRoleName()
-							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
-						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
-								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
-					} else if(null != callAllocationDto.getRoleName()
-							&& callAllocationDto.getRoleName().equalsIgnoreCase("associate")){
-						outboundCallsPage = getOutboundCallsForMotherAssociate(pageable,callAllocationDto,tempFDateStamp,tempTDateStamp);
-						
-					}
-					else {
-						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
-								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-								tempFDateStamp, tempTDateStamp);
-					}
-				} else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
-					if (null != callAllocationDto.getRoleName()
-							&& callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
-						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(
-								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-								tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
-					}else if(null != callAllocationDto.getRoleName()
-							&& callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
-						outboundCallsPage = getOutboundcallsForChildAssociate(pageable,callAllocationDto,tempFDateStamp,tempTDateStamp);
-					}
-					else {
-						outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
-								pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-								tempFDateStamp, tempTDateStamp);
-					}
-				}
+	            // Handle the "Mother" record type
+	            if (callAllocationDto.getRecordType().equalsIgnoreCase("Mother")) {
+	                if (callAllocationDto.getRoleName() != null) {
+	                    if (callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
+	                        outboundCallsPage = getOutboundCallsForMotherAssociate(pageable, callAllocationDto, tempFDateStamp, tempTDateStamp);
+	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("MO")) {
+	                        // MO Role logic for Mother
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherMO(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+	                    } else {
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp);
+	                    }
+	                }
+	            }
+	            // Handle the "Child" record type
+	            else if (callAllocationDto.getRecordType().equalsIgnoreCase("Child")) {
+	                if (callAllocationDto.getRoleName() != null) {
+	                    if (callAllocationDto.getRoleName().equalsIgnoreCase("ANM")) {
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
+	                        outboundCallsPage = getOutboundcallsForChildAssociate(pageable, callAllocationDto, tempFDateStamp, tempTDateStamp);
+	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("MO")) {
+	                        // MO Role logic for Child
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildMO(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
+	                    } else {
+	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
+	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
+	                                tempFDateStamp, tempTDateStamp);
+	                    }
+	                }
+	            }
 
-				List<Long> motherIds = new ArrayList<>();
-				List<Long> childIds = new ArrayList<>();
+	            List<Long> motherIds = new ArrayList<>();
+	            List<Long> childIds = new ArrayList<>();
 
-				if (outboundCallsPage != null && outboundCallsPage.getSize() > 0) {
-					List<OutboundCalls> resultList = outboundCallsPage.getContent();
-					for (OutboundCalls outboundCalls : resultList) {
+	            if (outboundCallsPage != null && outboundCallsPage.getSize() > 0) {
+	                List<OutboundCalls> resultList = outboundCallsPage.getContent();
+	                for (OutboundCalls outboundCalls : resultList) {
+	                    outboundCalls.setAllocatedUserId(null);
+	                    outboundCalls.setAllocationStatus("unallocated");
 
-						outboundCalls.setAllocatedUserId(null);
-						outboundCalls.setAllocationStatus("unallocated");
+	                    if (outboundCalls.getEcdCallType() != null
+	                            && outboundCalls.getEcdCallType().equalsIgnoreCase("introductory")) {
+	                        outboundCalls.setDeleted(true);
 
-						if (outboundCalls.getEcdCallType() != null
-								&& outboundCalls.getEcdCallType().equalsIgnoreCase("introductory")) {
-							outboundCalls.setDeleted(true);
-							// write logic to update in mother or child table also - isAllocated = false
-							if (outboundCalls.getChildId() != null)
-								childIds.add(outboundCalls.getChildId());
-							else if (outboundCalls.getMotherId() != null)
-								motherIds.add(outboundCalls.getMotherId());
+	                        // Update in mother or child table as well - isAllocated = false
+	                        if (outboundCalls.getChildId() != null)
+	                            childIds.add(outboundCalls.getChildId());
+	                        else if (outboundCalls.getMotherId() != null)
+	                            motherIds.add(outboundCalls.getMotherId());
+	                    }
+	                }
 
-						}
+	                // Save the changes to the outbound calls
+	                outboundCallsRepo.saveAll(resultList);
 
-					}
+	                // Update the mother and child records to mark them as unallocated
+	                if (motherIds.size() > 0)
+	                    motherRecordRepo.updateIsAllocatedFalse(motherIds);
+	                if (childIds.size() > 0)
+	                    childRecordRepo.updateIsAllocatedFalse(childIds);
+	            } else {
+	                throw new ECDException("No record available for move to bin. Please contact administrator.");
+	            }
+	        } else {
+	            throw new InvalidRequestException(callAllocationDto.toString(), "NULL or part of required request is NULL");
+	        }
 
-					outboundCallsRepo.saveAll(resultList);
+	        // Return success response
+	        Map<String, Object> responseMap = new HashMap<>();
+	        responseMap.put("response", "Records successfully moved to bin");
+	        return new Gson().toJson(responseMap);
 
-					if (motherIds.size() > 0)
-						motherRecordRepo.updateIsAllocatedFalse(motherIds);
-					if (childIds.size() > 0)
-						childRecordRepo.updateIsAllocatedFalse(childIds);
-				} else
-					throw new ECDException("no record available for move to bin. please contact administrator");
-			} else
-				throw new InvalidRequestException(callAllocationDto.toString(),
-						"NULL or part of required request is NULL");
-
-			Map<String, Object> responseMap = new HashMap<>();
-			responseMap.put("response", "records successfully moved to bin");
-			return new Gson().toJson(responseMap);
-		} catch (Exception e) {
-			throw new ECDException(e);
-		}
-
+	    } catch (Exception e) {
+	        throw new ECDException(e);
+	    }
 	}
+
 
 	private Page<OutboundCalls> getOutboundCallsForMotherAssociate(Pageable pageable,
 			RequestCallAllocationDTO callAllocationDto, Timestamp tempFDateStamp, Timestamp tempTDateStamp) {

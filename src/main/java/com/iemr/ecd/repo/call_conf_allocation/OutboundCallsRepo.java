@@ -364,5 +364,20 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(" UPDATE OutboundCalls SET isFurtherCallRequired = :isFurtherCallRequired WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
 	public int updateIsFurtherCallRequiredForUpcomingCallForMother(@Param("motherId") Long motherId, @Param("isFurtherCallRequired") Boolean isFurtherCallRequired);
 
+	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
+			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage")
+	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherMO(Pageable pageable,
+			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
+			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 
+	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
+			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
+	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildMO(Pageable pageable,
+			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
+			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);
+
+	
 }
