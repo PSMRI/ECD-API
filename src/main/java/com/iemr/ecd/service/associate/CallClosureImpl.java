@@ -223,6 +223,10 @@ public class CallClosureImpl {
 				        callObj.setAllocationStatus(Constants.UNALLOCATED);
 				        callObj.setCallAttemptNo(0);
 				    }
+
+				    else if (!isHrp && !obj.getIsCallDisconnected()) {
+				    	callObj.setCallStatus(Constants.COMPLETED);
+				    }
 				}
 
 				
