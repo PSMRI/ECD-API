@@ -177,14 +177,7 @@ public class BeneficiaryRegistrationServiceImpl {
 			}
 
 			RestTemplate restTemplate = new RestTemplate();
-			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-					.getRequest();
-			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-			headers.add("AUTHORIZATION", Authorization);
-			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-			HttpEntity<Object> requestObj = new HttpEntity<Object>(request, headers);
+			HttpEntity<Object> requestObj = RestTemplateUtil.createRequestEntity(request, Authorization);
 			ResponseEntity<String> response = restTemplate.exchange(beneficiaryEditUrl, HttpMethod.POST, requestObj,
 					String.class);
 
