@@ -151,14 +151,14 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 //			@Param("phoneNoType") String phoneNoType);
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND t.isFurtherCallRequired != 0")
 	int getAllocatedRecordsCountMotherUser(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND t.isFurtherCallRequired !=0 ")
 	int getAllocatedRecordsCountMotherUserANM(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType,@Param("preferredLanguage") String preferredLanguage);
