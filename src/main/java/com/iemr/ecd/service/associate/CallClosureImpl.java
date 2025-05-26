@@ -204,7 +204,7 @@ public class CallClosureImpl {
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
 				
-				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+				if(!isLanguageMapped && (callObj.getEcdCallType().equalsIgnoreCase("introductory") || callObj.getEcdCallType().equalsIgnoreCase("ANM"))) {
 					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
