@@ -203,15 +203,14 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
-				
-				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+
+				if(!isLanguageMapped && (callObj.getEcdCallType().equalsIgnoreCase("introductory") || callObj.getEcdCallType().equalsIgnoreCase("ANM"))) {
+
 					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}
-
-				
 				if (request.getIsHrp() != null) {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
