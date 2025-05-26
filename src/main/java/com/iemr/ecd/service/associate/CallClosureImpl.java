@@ -195,6 +195,7 @@ public class CallClosureImpl {
 				if (obj.getReceivedRoleName() != null && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
 						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty()) {
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
+					callObj.setAllocatedUserId(null);
 					callObj.setCallAttemptNo(0);
 				} else {
 					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
