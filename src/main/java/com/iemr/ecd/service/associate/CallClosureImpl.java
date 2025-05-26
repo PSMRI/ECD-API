@@ -159,11 +159,10 @@ public class CallClosureImpl {
 
 				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
 					callObj.setCallStatus(Constants.OPEN);
-					callObj.setAllocationStatus(Constants.UNALLOCATED);
+					//callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
 					callObj.setCallStatus(Constants.COMPLETED);
 				}
-
 				if (obj.getIsFurtherCallRequired() != null && !obj.getIsFurtherCallRequired()) {
 					callObj.setCallStatus(Constants.COMPLETED);
 				} else {
@@ -204,6 +203,7 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
+				
 				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
 					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
