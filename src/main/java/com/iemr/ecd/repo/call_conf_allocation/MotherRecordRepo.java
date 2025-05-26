@@ -64,7 +64,7 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 
 	// get eligible introductory Records
 	@Query(value = " SELECT COUNT(1) FROM MotherRecord as t WHERE t.isAllocated=:isAllocated AND "
-			+ " t.createdDate >=:fDate AND t.createdDate <=:tDate AND t.whomPhoneNo=:whomPhoneNo AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " t.createdDate >=:fDate AND t.createdDate <=:tDate AND t.whomPhoneNo=:whomPhoneNo")
 	public int getRecordCount(@Param("isAllocated") Boolean isAllocated, @Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("whomPhoneNo") String whomPhoneNo);
 
