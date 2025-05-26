@@ -194,7 +194,7 @@ public class CallClosureImpl {
 				}
 				if (obj.getReceivedRoleName() != null && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
 						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty()) {
-					callObj.setAllocationStatus(Constants.OPEN);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
 					callObj.setCallAttemptNo(0);
 				} else {
 					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
@@ -203,7 +203,6 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
-
 				if(!isLanguageMapped && (callObj.getEcdCallType().equalsIgnoreCase("introductory") || callObj.getEcdCallType().equalsIgnoreCase("ANM"))) {
 
 					callObj.setAllocatedUserId(null);
