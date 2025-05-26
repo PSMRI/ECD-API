@@ -16,6 +16,9 @@ public static final String TIME_FORMAT_END_TIME = "T23:59:59+05:30";
 public static final String T = "T";
 public static final String FROM_DATE_TO_DATE_IS_NULL = "from date / to date is null";
 public static final List<String> REASONFORCALLNOTANSWERED = List.of("Invalid number","Out of service","Out of Reach","Switched off","No reply","Number busy","Call not connected");
+public static final String JWT_TOKEN = "Jwttoken";
+public static final String USER_AGENT = "User-Agent";
+public static final String OKHTTP = "okhttp";
 
 private Constants() {}
 }

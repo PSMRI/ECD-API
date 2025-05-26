@@ -10,6 +10,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.iemr.ecd.utils.constants.Constants;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 public class RestTemplateUtil {
@@ -39,7 +41,9 @@ public class RestTemplateUtil {
         	headers.add(HttpHeaders.USER_AGENT, UserAgentContext.getUserAgent());
         }
         headers.add(HttpHeaders.AUTHORIZATION, authorization);
-        headers.add("JwtToken",requestHeader.getHeader("JwtToken"));
+        if(null != requestHeader.getHeader(Constants.JWT_TOKEN)) {
+        	headers.add(Constants.JWT_TOKEN,requestHeader.getHeader(Constants.JWT_TOKEN));
+        }
         if(null != jwtTokenFromCookie) {
         	headers.add(HttpHeaders.COOKIE, "Jwttoken=" + jwtTokenFromCookie);
         }
