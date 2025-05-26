@@ -210,8 +210,6 @@ public class CallClosureImpl {
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}
-
-				
 				if (request.getIsHrp() != null) {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
