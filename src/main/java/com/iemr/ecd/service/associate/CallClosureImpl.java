@@ -203,6 +203,7 @@ public class CallClosureImpl {
 				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
 					callObj.setCallStatus(Constants.OPEN);
 				}
+				
 				isLanguageMapped = isLanguageMappedWithUser(request);
 				if (!isLanguageMapped 
 				        && callObj.getEcdCallType().equalsIgnoreCase("introductory") 
