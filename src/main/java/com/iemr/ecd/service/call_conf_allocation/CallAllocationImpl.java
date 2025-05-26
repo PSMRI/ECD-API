@@ -147,7 +147,7 @@ public class CallAllocationImpl {
 	                callCountPointer++;
 	            }
 	        }
-
+	        outboundCallsRepo.saveAll(outBoundCallList);
 	    } else {
 	        List<MotherRecord> motherRecords = motherRecordRepo.getMotherRecordForAllocation(
 	            fromDate, toDate, callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -189,8 +189,6 @@ public class CallAllocationImpl {
 	        motherRecordRepo.updateIsAllocatedStatus(motherIds);
 	        // Assuming updateIsAllocatedStatus updates all in one batch
 	    }
-
-	    outboundCallsRepo.saveAll(outBoundCallList);
 
 	    Map<String, Object> responseMap = new HashMap<>();
 	    responseMap.put("response", outBoundCallList.size() + " mother record(s) allocated successfully");
