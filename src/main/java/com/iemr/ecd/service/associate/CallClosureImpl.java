@@ -205,10 +205,12 @@ public class CallClosureImpl {
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
 				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
 					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
+					}
 				}
 
 				
