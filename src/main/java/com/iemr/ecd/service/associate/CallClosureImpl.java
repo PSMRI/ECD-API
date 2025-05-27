@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
 import com.iemr.ecd.dao.CallConfiguration;
@@ -156,17 +157,19 @@ public class CallClosureImpl {
 					callConfigurationDetail = callConfigurationDetails.get(0);
 				}
 
-				if (obj.getIsCallAnswered() != null && obj.getIsCallAnswered()) {
-					callObj.setCallStatus("Completed");
+				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
+					callObj.setCallStatus(Constants.OPEN);
+					//callObj.setAllocationStatus(Constants.UNALLOCATED);
+				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
+					callObj.setCallStatus(Constants.COMPLETED);
 				}
-
 				if (obj.getIsFurtherCallRequired() != null && !obj.getIsFurtherCallRequired()) {
-					callObj.setCallStatus("Completed");
+					callObj.setCallStatus(Constants.COMPLETED);
 				} else {
 					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
-						callObj.setCallStatus("Open");
+						callObj.setCallStatus(Constants.OPEN);
 					} else {
-						callObj.setCallStatus("Completed");
+						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
 								callObj.getPhoneNumberType());
 					}
@@ -191,7 +194,8 @@ public class CallClosureImpl {
 				}
 				if (obj.getReceivedRoleName() != null && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
 						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty()) {
-					callObj.setAllocationStatus(Constants.OPEN);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
+					callObj.setAllocatedUserId(null);
 					callObj.setCallAttemptNo(0);
 				} else {
 					callObj.setCallAttemptNo(callObj.getCallAttemptNo() + 1);
@@ -200,18 +204,31 @@ public class CallClosureImpl {
 					callObj.setCallStatus(Constants.OPEN);
 				}
 				isLanguageMapped = isLanguageMappedWithUser(request);
-				if(!isLanguageMapped && callObj.getEcdCallType().equalsIgnoreCase("introductory")) {
+				if(!isLanguageMapped && (callObj.getEcdCallType().equalsIgnoreCase("introductory") || callObj.getEcdCallType().equalsIgnoreCase("ANM"))) {
+
 					callObj.setAllocatedUserId(null);
 					callObj.setCallStatus(Constants.OPEN);
 					callObj.setCallAttemptNo(0);
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}
 				if (request.getIsHrp() != null) {
-					callObj.setIsHighRisk(request.getIsHrp());
-					if(obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)){
-						callObj.setCallStatus(Constants.OPEN);
-					}
+				    boolean isHrp = request.getIsHrp();
+			        callObj.setIsHighRisk(isHrp);
+
+				    // Check if the role should be changed to MO
+				    if (isHrp && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				    }
+
+				    else if (!isHrp && !obj.getIsCallDisconnected()) {
+				    	callObj.setCallStatus(Constants.COMPLETED);
+				    }
 				}
+
+				
 				outboundCallsRepo.save(callObj);
 			} else
 				throw new ECDException(

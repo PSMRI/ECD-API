@@ -51,6 +51,7 @@ import com.iemr.ecd.repo.call_conf_allocation.MotherRecordRepo;
 import com.iemr.ecd.repo.call_conf_allocation.OutboundCallsRepo;
 import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.mapper.CookieUtil;
+import com.iemr.ecd.utils.mapper.RestTemplateUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -106,17 +107,9 @@ public class BeneficiaryRegistrationServiceImpl {
 //				request.setEdd(getTimestampFromString(request.getEddStr()));
 
 			RestTemplate restTemplate = new RestTemplate();
-			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-					.getRequest();
-			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-			headers.add("AUTHORIZATION", Authorization);
-			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
 			String json = objectMapper.writeValueAsString(request);
-
-			HttpEntity<Object> requestObj = new HttpEntity<Object>(json, headers);
-
+			HttpEntity<Object> requestObj = RestTemplateUtil.createRequestEntity(json, Authorization);
+			
 			ResponseEntity<String> response = restTemplate.exchange(registerBeneficiaryUrl, HttpMethod.POST, requestObj,
 					String.class);
 
@@ -184,14 +177,7 @@ public class BeneficiaryRegistrationServiceImpl {
 			}
 
 			RestTemplate restTemplate = new RestTemplate();
-			HttpServletRequest requestHeader = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-					.getRequest();
-			String jwtTokenFromCookie = cookieUtil.getJwtTokenFromCookie(requestHeader);
-			MultiValueMap<String, String> headers = new LinkedMultiValueMap<String, String>();
-			headers.add("Content-Type", MediaType.APPLICATION_JSON + ";charset=utf-8");
-			headers.add("AUTHORIZATION", Authorization);
-			headers.add("Cookie", "Jwttoken=" + jwtTokenFromCookie);
-			HttpEntity<Object> requestObj = new HttpEntity<Object>(request, headers);
+			HttpEntity<Object> requestObj = RestTemplateUtil.createRequestEntity(request, Authorization);
 			ResponseEntity<String> response = restTemplate.exchange(beneficiaryEditUrl, HttpMethod.POST, requestObj,
 					String.class);
 
