@@ -7,7 +7,7 @@ COPY . .
 
 # Build the application while caching Maven dependencies to speed up future builds
 RUN --mount=type=cache,target=/root/.m2 \
-    mvn clean package -DENV_VAR=ci -DskipTests -Dgit.skip=true
+    mvn clean package -DENV_VAR=docker -DskipTests -Dgit.skip=true
 
 # --- Stage 2: Run the application with a minimal JRE image ---
 FROM eclipse-temurin:17-jre
@@ -19,4 +19,5 @@ COPY --from=build /app/target/*.war app.war
 
 EXPOSE 8080
 
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.war"]
