@@ -46,11 +46,17 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 			String phoneType, Timestamp fromDate, Timestamp toDate);
 
 	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
+			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType AND preferredLanguage = :preferredLanguage LIMIT :recordLimit ", nativeQuery = true)
+	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
+			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
+			@Param("recordLimit") int recordLimit, @Param("preferredLanguage") String preferredLanguage);
+
+	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
 			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType LIMIT :recordLimit ", nativeQuery = true)
 	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit);
-
+	
 	@Modifying
 	@Transactional
 	@Query(" UPDATE MotherRecord SET isAllocated = true WHERE ecdIdNo IN :motherId ")
@@ -58,7 +64,7 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 
 	// get eligible introductory Records
 	@Query(value = " SELECT COUNT(1) FROM MotherRecord as t WHERE t.isAllocated=:isAllocated AND "
-			+ " t.createdDate >=:fDate AND t.createdDate <=:tDate AND t.whomPhoneNo=:whomPhoneNo  ")
+			+ " t.createdDate >=:fDate AND t.createdDate <=:tDate AND t.whomPhoneNo=:whomPhoneNo")
 	public int getRecordCount(@Param("isAllocated") Boolean isAllocated, @Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("whomPhoneNo") String whomPhoneNo);
 

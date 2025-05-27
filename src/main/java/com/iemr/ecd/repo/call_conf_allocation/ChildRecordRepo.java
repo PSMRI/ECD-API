@@ -41,11 +41,17 @@ public interface ChildRecordRepo extends CrudRepository<ChildRecord, Long> {
 			Timestamp fromDate, Timestamp toDate);
 
 	@Query(value = " SELECT * FROM t_childvaliddata WHERE IsAllocated is false AND "
+			+ " CreatedDate BETWEEN :fDate AND :tDate AND Phone_No_of =:phoneType AND preferredLanguage =:preferredLanguage LIMIT :recordLimit ", nativeQuery = true)
+	public List<ChildRecord> getChildRecordForAllocation(@Param("fDate") Timestamp fDate,
+			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
+			@Param("recordLimit") int recordLimit, @Param("preferredLanguage") String preferredLanguage);
+
+	@Query(value = " SELECT * FROM t_childvaliddata WHERE IsAllocated is false AND "
 			+ " CreatedDate BETWEEN :fDate AND :tDate AND Phone_No_of =:phoneType LIMIT :recordLimit ", nativeQuery = true)
 	public List<ChildRecord> getChildRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit);
-
+	
 	@Modifying
 	@Transactional
 	@Query(" UPDATE ChildRecord SET isAllocated = true WHERE ecdIdNoChildId IN :childId ")
