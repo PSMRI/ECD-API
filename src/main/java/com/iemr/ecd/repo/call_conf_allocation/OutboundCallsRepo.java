@@ -71,6 +71,7 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	Page<OutboundCalls> getMotherRecordsForAssociate(Pageable pageable,@Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 
+	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord cv ON t.childId = cv.ecdIdNoChildId  WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND"
