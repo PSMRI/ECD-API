@@ -142,7 +142,7 @@ public class CallAllocationController {
 
 	}
 	
-	@GetMapping(value = "/getEligibleRecordsLanguageInfo/{psmId}/{phoneNoType}/{recordType}/{fDate}/{tDate}/{preferredLanguage}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(value = "/getEligibleRecordsLanguageInfo/{psmId}/{phoneNoType}/{recordType}/{fDate}/{tDate}/{preferredLanguage}/{role}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch eligible Language records for allocation", description = "Desc - Fetch eligible records for allocation")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = CustomExceptionResponse.SUCCESS_SC_V, description = CustomExceptionResponse.SUCCESS_SC, content = {
