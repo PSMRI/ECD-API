@@ -66,10 +66,12 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord mv ON t.motherId = mv.ecdIdNo WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) AND mv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) AND mv.preferredLanguage = :preferredLanguage AND "
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	Page<OutboundCalls> getMotherRecordsForAssociate(Pageable pageable,@Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 
+	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord cv ON t.childId = cv.ecdIdNoChildId  WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND"
@@ -78,7 +80,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord cv ON t.childId = cv.ecdIdNoChildId  WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND cv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND cv.preferredLanguage = :preferredLanguage AND"
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	Page<OutboundCalls> getChildRecordsForAssociate(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
