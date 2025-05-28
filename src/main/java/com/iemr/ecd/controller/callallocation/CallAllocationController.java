@@ -153,9 +153,9 @@ public class CallAllocationController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<ResponseEligibleCallRecordsDTO> getEligibleRecordsLanguageInfo(@PathVariable int psmId,
 			@PathVariable String phoneNoType, @PathVariable String recordType, @PathVariable String fDate,
-			@PathVariable String tDate, @PathVariable String preferredLanguage) throws ECDException {
+			@PathVariable String tDate, @PathVariable String preferredLanguage,@PathVariable String role) throws ECDException {
 		return new ResponseEntity<>(
-				callAllocationImpl.getEligibleRecordsLanguageInfo(psmId, phoneNoType, recordType, fDate, tDate, preferredLanguage), HttpStatus.OK);
+				callAllocationImpl.getEligibleRecordsLanguageInfo(psmId, phoneNoType, recordType, fDate, tDate, preferredLanguage,role), HttpStatus.OK);
 
 	}
 

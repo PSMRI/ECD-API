@@ -1054,8 +1054,8 @@ public class CallAllocationImpl {
 		}
 	}
 
-	public ResponseEligibleCallRecordsDTO getEligibleRecordsLanguageInfo(int psmId, String phoneNoType, String recordType, String fDate,
-			String tDate, String preferredLanguage) {
+	public ResponseEligibleCallRecordsDTO getEligibleRecordsLanguageInfo(int psmId, String phoneNoType,
+			String recordType, String fDate, String tDate, String preferredLanguage, String role) {
 		try {
 			if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
 				throw new InvalidRequestException("preferred language is required");
@@ -1063,25 +1063,45 @@ public class CallAllocationImpl {
 			Timestamp tempFDateStamp = null;
 			Timestamp tempTDateStamp = null;
 			if (fDate != null && tDate != null) {
-				tempFDateStamp = getTimestampFromString(fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
-				tempTDateStamp = getTimestampFromString(tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
+				tempFDateStamp = getTimestampFromString(
+						fDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_START_TIME));
+				tempTDateStamp = getTimestampFromString(
+						tDate.split(Constants.T)[0].concat(Constants.TIME_FORMAT_END_TIME));
 			} else
 				throw new InvalidRequestException(Constants.FROM_DATE_TO_DATE_IS_NULL);
 
 			ResponseEligibleCallRecordsDTO responseEligibleCallRecordsDTO = new ResponseEligibleCallRecordsDTO();
 			int totalLowRisk = 0;
-			if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)) {
-				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType, preferredLanguage);
-			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.CHILD)) {
-				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType, preferredLanguage);
+			int totalIntroductoryCount = 0;
+			if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)
+					&& role.equalsIgnoreCase(Constants.ANM)) {
+				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType, preferredLanguage);
+				responseEligibleCallRecordsDTO.setTotalLowRiskRecord(totalLowRisk);
+				return responseEligibleCallRecordsDTO;
+			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.CHILD)
+					&& role.equalsIgnoreCase(Constants.ANM)) {
+				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLRByLanguage(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType, preferredLanguage);
+				responseEligibleCallRecordsDTO.setTotalLowRiskRecord(totalLowRisk);
+				return responseEligibleCallRecordsDTO;
+			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.MOTHER)
+					&& role.equalsIgnoreCase(Constants.ASSOCIATE)) {
+				totalIntroductoryCount = outboundCallsRepo.getMotherUnAllocatedCountIntroductoryByLanguage(
+						Constants.UNALLOCATED, psmId, tempFDateStamp, tempTDateStamp, phoneNoType, preferredLanguage);
+				responseEligibleCallRecordsDTO.setTotalIntroductoryRecord(totalIntroductoryCount);
+				return responseEligibleCallRecordsDTO;
+			} else if (recordType != null && recordType.equalsIgnoreCase(Constants.CHILD)
+					&& role.equalsIgnoreCase(Constants.ASSOCIATE)) {
+				totalIntroductoryCount = outboundCallsRepo.getChildUnAllocatedCountIntroductoryByLanguage(
+						Constants.UNALLOCATED, psmId, tempFDateStamp, tempTDateStamp, phoneNoType, preferredLanguage);
+				responseEligibleCallRecordsDTO.setTotalIntroductoryRecord(totalIntroductoryCount);
+				return responseEligibleCallRecordsDTO;
 			}
-			responseEligibleCallRecordsDTO.setTotalLowRiskRecord(totalLowRisk);
-			return responseEligibleCallRecordsDTO;
+
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}
-
+		return null;
 	}
 }
