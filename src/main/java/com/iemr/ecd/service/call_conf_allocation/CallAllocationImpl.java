@@ -123,6 +123,7 @@ public class CallAllocationImpl {
 	    int callCountPointer = 0;
 
 	    if (callAllocationDto.getPreferredLanguage() != null) {
+	    	List<Long> motherIds = new ArrayList<>();
 	        Page<OutboundCalls> page = outboundCallsRepo.getMotherRecordsForAssociate(
 	            PageRequest.of(0, totalRecordToAllocate),
 	            "unallocated",
@@ -143,11 +144,13 @@ public class CallAllocationImpl {
 	                call.setAllocatedUserId(callAllocationDto.getToUserIds()[callCountPointer / callAllocationDto.getNoOfCalls()]);
 	                call.setCallAttemptNo(0);
 	                callCountPointer++;
+	                motherIds.add(call.getMotherId());
 	            } catch (Exception e) {
 	                callCountPointer++;
 	            }
 	        }
 	        outboundCallsRepo.saveAll(outBoundCallList);
+	        motherRecordRepo.updateIsAllocatedStatus(motherIds);
 	    } else {
 	        List<MotherRecord> motherRecords = motherRecordRepo.getMotherRecordForAllocation(
 	            fromDate, toDate, callAllocationDto.getPhoneNoType(), totalRecordToAllocate);
@@ -278,11 +281,11 @@ public class CallAllocationImpl {
 					}
 				}
 				outboundCallsRepo.saveAll(outBoundCallList);
-				int i = childRecordRepo.updateIsAllocatedStatus(childIds);
+				childRecordRepo.updateIsAllocatedStatus(childIds);
 
 			} else if (null != childRecordsForAssociate && !childRecordsForAssociate.isEmpty()) {
 				outBoundCallList = childRecordsForAssociate.getContent();
-
+				List<Long> childIds = new ArrayList<>();
 				if (!outBoundCallList.isEmpty()) {
 					for (OutboundCalls outboundCall : outBoundCallList) {
 						try {
@@ -291,13 +294,14 @@ public class CallAllocationImpl {
 									/ callAllocationDto.getNoOfCalls()]);
 
 							outboundCall.setCallAttemptNo(0);
-
 							callCountPointer++;
+							childIds.add(outboundCall.getChildId());
 						} catch (Exception e) {
 							callCountPointer++;
 						}
 					}
 					outboundCallsRepo.saveAll(outBoundCallList);
+					childRecordRepo.updateIsAllocatedStatus(childIds);
 				}
 			} else {
 				throw new ECDException("no eligible record available to allocate, please contact administrator");
