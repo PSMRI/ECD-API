@@ -618,11 +618,6 @@ public class CallAllocationImpl {
 	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
 	                        outboundCallsPage = getOutboundCallsForMotherAssociate(pageable, callAllocationDto, 
 	                        		tempFDateStamp, tempTDateStamp);
-	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("MO")) {
-	                        // MO Role logic for Mother
-	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherMO(
-	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 	                    } else {
 	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(
 	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
@@ -639,12 +634,7 @@ public class CallAllocationImpl {
 	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
 	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("associate")) {
 	                        outboundCallsPage = getOutboundcallsForChildAssociate(pageable, callAllocationDto, tempFDateStamp, tempTDateStamp);
-	                    } else if (callAllocationDto.getRoleName().equalsIgnoreCase("MO")) {
-	                        // MO Role logic for Child
-	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildMO(
-	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
-	                                tempFDateStamp, tempTDateStamp, callAllocationDto.getPreferredLanguage());
-	                    } else {
+	                    }  else {
 	                        outboundCallsPage = outboundCallsRepo.getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(
 	                                pageable, callAllocationDto.getUserId(), "open", callAllocationDto.getPhoneNoType(),
 	                                tempFDateStamp, tempTDateStamp);
