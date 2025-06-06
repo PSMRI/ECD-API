@@ -192,9 +192,12 @@ public class CallClosureImpl {
 					}
 
 				}
-				if (obj.getReceivedRoleName() != null && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)
-						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty()) {
+				isLanguageMapped = isLanguageMappedWithUser(request);
+				
+				if (obj.getReceivedRoleName() != null && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) || callObj.getEcdCallType().equalsIgnoreCase("introductory"))
+						&& request.getPreferredLanguage() != null && !request.getPreferredLanguage().isEmpty() && !isLanguageMapped) {
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
+					callObj.setCallStatus(Constants.OPEN);
 					callObj.setAllocatedUserId(null);
 					callObj.setCallAttemptNo(0);
 				} else {
@@ -203,14 +206,7 @@ public class CallClosureImpl {
 				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
 					callObj.setCallStatus(Constants.OPEN);
 				}
-				isLanguageMapped = isLanguageMappedWithUser(request);
-				if(!isLanguageMapped && (callObj.getEcdCallType().equalsIgnoreCase("introductory") || callObj.getEcdCallType().equalsIgnoreCase("ANM"))) {
-
-					callObj.setAllocatedUserId(null);
-					callObj.setCallStatus(Constants.OPEN);
-					callObj.setCallAttemptNo(0);
-					callObj.setAllocationStatus(Constants.UNALLOCATED);
-				}
+				
 				if (request.getIsHrp() != null) {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
@@ -244,9 +240,8 @@ public class CallClosureImpl {
 					// Mother
 					outboundCallsRepo.updateHRPForUpcomingCall(callObj.getMotherId(), callObj.getIsHighRisk());
 				}
-
 			}
-			if (null != obj.getIsFurtherCallRequired() && !obj.getIsFurtherCallRequired()) {
+			if (null != obj.getIsFurtherCallRequired()) {
 				if (callObj.getMotherId() != null && callObj.getChildId() != null) {
 					try {
 						outboundCallsRepo.updateIsFurtherCallRequiredForUpcomingCallForChild(callObj.getChildId(),
