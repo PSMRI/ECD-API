@@ -228,9 +228,20 @@ public class MasterServiceImpl {
 	public List<V_GetUserlangmapping> getLanguageByUserId(Integer userId) throws ECDException {
 		return v_GetUserlangmappingRepo.findByUserId(userId);
 	}
+
 	public String getUserRole(Long userId) {
-		return roleRepo.getRoleNamebyUserId(userId);
-		
+		if (null == userId || userId <= 0) {
+			throw new IllegalArgumentException("Invalid User ID : " + userId);
+		}
+		try {
+			String role = roleRepo.getRoleNamebyUserId(userId);
+			if (null == role || role.trim().isEmpty()) {
+				throw new ECDException("No role found for userId : " + userId);
+			}
+			return role;
+		} catch (Exception e) {
+			throw new ECDException("Failed to retrieverole for usedId : " + userId + " error : " + e.getMessage());
+		}
 	}
 	
 	

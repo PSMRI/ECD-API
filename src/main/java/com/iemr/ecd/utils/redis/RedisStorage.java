@@ -101,10 +101,20 @@ public class RedisStorage {
     private RedisTemplate<String, String> redisTemplate;
 
     public void cacheUserRole(Long userId, String role) {
-        redisTemplate.opsForValue().set("role:" + userId, role, Duration.ofHours(1));
+    	try {
+    		redisTemplate.opsForValue().set("role:" + userId, role, Duration.ofHours(1));
+    	}catch (Exception e) {
+    		logger.warn("Failed to cache role for user {} : {} ", userId, e.getMessage());
+		}
+       
     }
 
-    public String getUserRoleFromCache(Long userId) {
-        return redisTemplate.opsForValue().get("role:" + userId);
-    }
+	public String getUserRoleFromCache(Long userId) {
+		try {
+			return redisTemplate.opsForValue().get("role:" + userId);
+		} catch (Exception e) {
+			logger.warn("Failed to retrieve cached role for user {} : {} ", userId, e.getMessage());
+			return null;
+		}
+	}
 }
