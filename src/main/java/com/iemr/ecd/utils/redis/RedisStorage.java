@@ -21,6 +21,8 @@
 */
 package com.iemr.ecd.utils.redis;
 
+import java.time.Duration;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands.SetOption;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.stereotype.Component;
 
@@ -94,4 +97,14 @@ public class RedisStorage {
 
 		}
 	}
+	@Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    public void cacheUserRole(Long userId, String role) {
+        redisTemplate.opsForValue().set("role:" + userId, role, Duration.ofHours(1));
+    }
+
+    public String getUserRoleFromCache(Long userId) {
+        return redisTemplate.opsForValue().get("role:" + userId);
+    }
 }

@@ -228,6 +228,10 @@ public class MasterServiceImpl {
 	public List<V_GetUserlangmapping> getLanguageByUserId(Integer userId) throws ECDException {
 		return v_GetUserlangmappingRepo.findByUserId(userId);
 	}
+	public String getUserRole(Long userId) {
+		return roleRepo.getRoleNamebyUserId(userId);
+		
+	}
 	
 	
 	//gender master

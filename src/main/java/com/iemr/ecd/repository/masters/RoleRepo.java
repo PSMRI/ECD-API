@@ -23,7 +23,9 @@ package com.iemr.ecd.repository.masters;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.iemr.ecd.dao.masters.Role;
@@ -32,5 +34,6 @@ import com.iemr.ecd.dao.masters.Role;
 public interface RoleRepo extends CrudRepository<Role, Integer> {
 	
 	List<Role> findByPsmIdAndDeleted(Integer psmId, Boolean deleted);
-
+	@Query(nativeQuery = true,value = "select rolename from m_role where roleid in (select roleid from m_userservicerolemapping where userid=:userID)")
+	String getRoleNamebyUserId(@Param("userID") Long userID);
 }
