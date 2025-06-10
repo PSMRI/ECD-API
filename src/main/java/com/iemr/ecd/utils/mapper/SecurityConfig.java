@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.iemr.ecd.utils.advice.exception_handler.CustomAccessDeniedHandler;
 import com.iemr.ecd.utils.advice.exception_handler.CustomAuthenticationEntryPoint;
@@ -31,10 +32,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/user/**").permitAll()
+                .requestMatchers("/user/*").permitAll()
                 .anyRequest().authenticated()
             ).exceptionHandling(ex -> ex
                     .authenticationEntryPoint(customAuthenticationEntryPoint)
