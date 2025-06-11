@@ -40,7 +40,7 @@ public class RoleAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException, java.io.IOException {
 		try {
-			String jwtFromCookie = getJwtTokenFromCookies(request);
+			String jwtFromCookie = CookieUtil.getJwtTokenFromCookie(request);
 			String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
 
 			String jwtToken = jwtFromCookie != null ? jwtFromCookie : jwtFromHeader;
@@ -76,16 +76,4 @@ public class RoleAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 	}
-    private String getJwtTokenFromCookies(HttpServletRequest request) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if (cookie.getName().equalsIgnoreCase(Constants.JWT_TOKEN)) {
-					return cookie.getValue();
-				}
-			}
-		}
-		return null;
-	}
-
 }
