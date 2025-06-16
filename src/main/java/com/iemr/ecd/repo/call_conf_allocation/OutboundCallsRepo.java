@@ -90,6 +90,7 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND "
+			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	Page<OutboundCalls> getMotherRecordsForMO(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId);
@@ -123,6 +124,7 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	// un-allocated, mother high risk,
 	@Query(value = " SELECT count(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND "
+			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	int getMotherUnAllocatedCountHR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
