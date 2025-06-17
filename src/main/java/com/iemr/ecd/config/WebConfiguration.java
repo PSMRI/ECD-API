@@ -24,13 +24,33 @@ package com.iemr.ecd.config;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebConfiguration.class);
+
+	@Value("${cors.allowed-origins}")
+	private String allowedOrigins;
+
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**").allowedMethods("*");
-	}
+		String[] originPatterns = Arrays.stream(allowedOrigins.split(","))
+				.map(String::trim)
+				.toArray(String[]::new);
 
+		logger.info("Initializing CORS configuration with allowed origins: {}", Arrays.toString(originPatterns));
+
+		registry.addMapping("/**")
+				.allowedOriginPatterns(originPatterns)
+				.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+				.allowedHeaders("*")
+				.exposedHeaders("Authorization", "Jwttoken")
+				.allowCredentials(true)
+				.maxAge(3600);
+	}
 }
