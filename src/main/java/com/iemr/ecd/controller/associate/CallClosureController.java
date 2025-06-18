@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,12 +42,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping(value = "/closure", headers = "Authorization")
-@CrossOrigin()
 public class CallClosureController {
 	@Autowired
 	private CallClosureImpl callClosureImpl;
 
-	@CrossOrigin()
 	@PostMapping(value = "/closeCall", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Call closure", description = "Desc - Call closure")
 	@ApiResponses(value = {
