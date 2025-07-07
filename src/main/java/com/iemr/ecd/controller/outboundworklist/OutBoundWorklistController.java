@@ -28,8 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +49,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping(value = "/outbound-worklist", headers = "Authorization")
-@CrossOrigin()
 @PreAuthorize("hasRole('ANM') || hasRole('MO') || hasRole('ASSOCIATE')")
 public class OutBoundWorklistController {
 
@@ -70,7 +69,7 @@ public class OutBoundWorklistController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 		String resp = objectMapper.writeValueAsString(motherWorkList);
-		return  new ResponseEntity<>(resp,HttpStatus.OK);
+		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/get-child-data/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)

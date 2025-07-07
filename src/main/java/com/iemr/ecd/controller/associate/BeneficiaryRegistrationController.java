@@ -25,7 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -43,14 +43,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping(value = "/beneficary", headers = "Authorization")
-@CrossOrigin()
 
 public class BeneficiaryRegistrationController {
 
 	@Autowired
 	private BeneficiaryRegistrationServiceImpl beneficiaryRegistrationServiceImpl;
 
-	@CrossOrigin()
 	@PostMapping(value = "/registration", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Create beneficiary registration", description = "Desc - Create Beneficiary registration")
 	@ApiResponses(value = {
@@ -67,7 +65,6 @@ public class BeneficiaryRegistrationController {
 				HttpStatus.OK);
 	}
 
-	@CrossOrigin()
 	@PostMapping(value = "/updateBeneficiaryDetails", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update beneficiary details", description = "Desc - Update Beneficiary details")
 	@ApiResponses(value = {

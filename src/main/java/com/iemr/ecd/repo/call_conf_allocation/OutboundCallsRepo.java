@@ -60,14 +60,16 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) AND"
 			+ " mv.preferredLanguage = :preferredLanguage AND t.displayEcdCallType != 'introductory' AND"
-			+ " (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+       		+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getMotherRecordsForANM(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord mv ON t.motherId = mv.ecdIdNo WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) AND mv.preferredLanguage = :preferredLanguage AND "
-			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getMotherRecordsForAssociate(Pageable pageable,@Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 
@@ -75,24 +77,28 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord cv ON t.childId = cv.ecdIdNoChildId  WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND"
-			+ " cv.preferredLanguage = :preferredLanguage AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " cv.preferredLanguage = :preferredLanguage AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getChildRecordsForANM(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord cv ON t.childId = cv.ecdIdNoChildId  WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL ) AND cv.preferredLanguage = :preferredLanguage AND"
-			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getChildRecordsForAssociate(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND "
+			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	Page<OutboundCalls> getMotherRecordsForMO(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId);
 
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NOT NULL AND t.isHrni = true AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " t.childId IS NOT NULL AND t.isHrni = true AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getChildRecordsForMO(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
 
@@ -101,7 +107,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL  AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getMotherUnAllocatedCountLR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
@@ -109,13 +116,15 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL )  "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getChildUnAllocatedCountLR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// un-allocated, mother high risk,
 	@Query(value = " SELECT count(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND "
+			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
 	int getMotherUnAllocatedCountHR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
@@ -125,21 +134,24 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND t.isHrni = true  " + " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory'"
-					+ " AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getChildUnAllocatedCountHR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// allocated, mother record,
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL " + " AND t.phoneNumberType=:phoneNoType AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL " + " AND t.phoneNumberType=:phoneNoType AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getTotalAllocatedCountMother(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// allocated, child record,
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo))  AND "
-			+ " t.childId IS NOT NULL  AND t.phoneNumberType=:phoneNoType AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NOT NULL  AND t.phoneNumberType=:phoneNoType AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getTotalAllocatedCountChild(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
@@ -158,28 +170,32 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 //			@Param("phoneNoType") String phoneNoType);
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountMotherUser(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountMotherUserANM(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType,@Param("preferredLanguage") String preferredLanguage);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountMotherUserAssociateWithPreferredLanguage(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType,@Param("preferredLanguage") String preferredLanguage);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NULL AND t.motherId IS NOT NULL AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountMotherUserAssociate(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType);
@@ -193,28 +209,32 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 //			@Param("phoneNoType") String phoneNoType);
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountChildUser(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountChildUserANM(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 	
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountChildUserAssociate(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND  t.callStatus=:callStatus "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL ")
+			+ " AND t.phoneNumberType=:phoneNoType AND t.childId IS NOT NULL AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getAllocatedRecordsCountChildUserAssociate(@Param("allocatedUserId") Integer allocatedUserId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType);
@@ -228,7 +248,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
 			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        + " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMother(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
@@ -236,7 +257,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
 			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        + " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherANM(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
@@ -244,7 +266,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
 			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND "
+       		+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherAssociate(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
@@ -252,7 +275,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
 			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL ")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherAssociate(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
@@ -265,28 +289,32 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 //			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChild(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
 	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildANM(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);
 	
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildAssociate(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);
 
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL ")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildAssociate(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate);
@@ -350,7 +378,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL  AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND mv.preferredLanguage = :preferredLanguage AND"
-			+ " t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getMotherUnAllocatedCountLRByLanguage(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 
@@ -358,7 +387,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL  AND (t.isHighRisk = false OR t.isHighRisk IS NULL ) "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND mv.preferredLanguage = :preferredLanguage AND"
-			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) ")
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getMotherUnAllocatedCountIntroductoryByLanguage(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 
@@ -367,7 +397,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL )  "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND cv.preferredLanguage = :preferredLanguage AND"
-			+ " t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getChildUnAllocatedCountLRByLanguage(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 
@@ -376,7 +407,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL )  "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND cv.preferredLanguage = :preferredLanguage AND"
-			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+			+ " t.displayEcdCallType = 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	int getChildUnAllocatedCountIntroductoryByLanguage(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType, @Param("preferredLanguage") String preferredLanguage);
 
@@ -394,14 +426,16 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
 			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage")
+			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND mv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeMotherMO(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 
 	@Query(value = " SELECT t FROM OutboundCalls AS t INNER JOIN ChildRecord AS cv ON t.childId = cv.ecdIdNoChildId WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus AND t.phoneNumberType=:phoneNoType "
-			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage ")
+			+ " AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND t.childId IS NOT NULL AND cv.preferredLanguage = :preferredLanguage AND "
+        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
 	Page<OutboundCalls> getAllocatedRecordsUserByRecordTypeAndPhoneTypeChildMO(Pageable pageable,
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);

@@ -27,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,7 +57,6 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/Questionnaire", headers = "Authorization")
-@CrossOrigin()
 @PreAuthorize("hasRole('SUPERVISOR')")
 public class EcdQuestionareController {
 
@@ -90,7 +89,7 @@ public class EcdQuestionareController {
 	public ResponseEntity<List<Questionnaire>> getQuestionnairesByPSMId(@PathVariable int psmId) {
 		return new ResponseEntity<>(questionareServiceImpl.getQuestionaresByProvider(psmId), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getQuestionnaires/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch questionnaire", description = "Desc - Fetch questionnaire")
 	@ApiResponses(value = {
@@ -228,7 +227,8 @@ public class EcdQuestionareController {
 			@ApiResponse(responseCode = CustomExceptionResponse.BAD_REQUEST_SC_V, description = CustomExceptionResponse.BAD_REQUEST_SC) })
 	public ResponseEntity<List<V_GetSectionQuestionMappingAssociates>> getQuesAndSecMapAssociateByProvider(
 			@PathVariable int psmId, @PathVariable String ecdCallType, @PathVariable String role) {
-		return new ResponseEntity<>(questionareServiceImpl.getQuesAndSecMapAssociateByProvider(psmId, ecdCallType, role),
+		return new ResponseEntity<>(
+				questionareServiceImpl.getQuesAndSecMapAssociateByProvider(psmId, ecdCallType, role),
 				HttpStatus.OK);
 	}
 
@@ -260,7 +260,7 @@ public class EcdQuestionareController {
 			@PathVariable int sectionId) {
 		return new ResponseEntity<>(questionareServiceImpl.getUnMappedQuestionnaires(psmId, sectionId), HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/createQuestionnairesMap", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Create questionnaire", description = "Desc - Create questionnaire")
 	@ApiResponses(value = {
@@ -274,7 +274,7 @@ public class EcdQuestionareController {
 
 		return new ResponseEntity<>(questionareServiceImpl.createQuestionnairesMap(questionnaireMap), HttpStatus.OK);
 	}
-	
+
 	@PostMapping(value = "/editQuestionnairesMap", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Edit questionnnaire map", description = "Desc - Edit questionnnaire map")
 	@ApiResponses(value = {
@@ -287,7 +287,7 @@ public class EcdQuestionareController {
 	public ResponseEntity<String> editQuestionnairesMap(@RequestBody MapQuestion editMapQuestion) {
 		return new ResponseEntity<>(questionareServiceImpl.editQuestionnairesMap(editMapQuestion), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "/getMappedParentChildQuestionnaire/{psmId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch parent child mapped questionnaire", description = "Desc - Fetch parent child mapped questionnaire")
 	@ApiResponses(value = {
