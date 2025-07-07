@@ -1,6 +1,8 @@
 package com.iemr.ecd.utils.mapper;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +41,7 @@ public class RoleAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException, java.io.IOException {
+		List<String> authRoles = null;
 		try {
 			String jwtFromCookie = CookieUtil.getJwtTokenFromCookie(request);
 			String jwtFromHeader = request.getHeader(Constants.JWT_TOKEN);
@@ -56,17 +59,22 @@ public class RoleAuthenticationFilter extends OncePerRequestFilter {
 			Object userIdObj = extractAllClaims.get("userId");
 			String userId = userIdObj != null ? userIdObj.toString() : null;
 
-			String authRole = redisService.getUserRoleFromCache(Long.valueOf(userId));
-			if (authRole == null) {
-				String role = userService.getUserRole(Long.valueOf(userId));
-				authRole = "ROLE_" + role.toUpperCase();
-				redisService.cacheUserRole(Long.valueOf(userId), authRole);
+			authRoles = redisService.getUserRoleFromCache(Long.valueOf(userId));
+			if (authRoles == null || authRoles.isEmpty()) {
+			    List<String> roles = userService.getUserRoles(Long.valueOf(userId)); // assuming this returns multiple roles
+			    authRoles = roles.stream()
+			    	    .filter(Objects::nonNull)
+			    	    .map(String::trim)
+			    	    .map(role -> "ROLE_" + role.toUpperCase().replace(" ", "_"))
+			    	    .collect(Collectors.toList());
+			    redisService.cacheUserRoles(Long.valueOf(userId), authRoles);
 			}
 
-			List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(authRole));
+			List<GrantedAuthority> authorities = authRoles.stream()
+			        .map(SimpleGrantedAuthority::new)
+			        .collect(Collectors.toList());
 
-			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null,
-					authorities);
+			UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		} catch (Exception e) {
 			logger.error("Authentication filter error for request {}: {}", request.getRequestURI(), e.getMessage());

@@ -22,6 +22,7 @@
 package com.iemr.ecd.utils.redis;
 
 import java.time.Duration;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,18 +101,20 @@ public class RedisStorage {
 	@Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-	public void cacheUserRole(Long userId, String role) {
+	public void cacheUserRoles(Long userId, List<String> roles) {
 		try {
-			redisTemplate.opsForValue().set("role:" + userId, role, Duration.ofHours(1));
+			 String key = "roles:" + userId;
+		        redisTemplate.delete(key); // Clear previous cache
+		        redisTemplate.opsForList().rightPushAll(key, roles);
 		} catch (Exception e) {
 			logger.warn("Failed to cache role for user {} : {} ", userId, e.getMessage());
 		}
 
 	}
 
-	public String getUserRoleFromCache(Long userId) {
+	public List<String> getUserRoleFromCache(Long userId) {
 		try {
-			return redisTemplate.opsForValue().get("role:" + userId);
+			return redisTemplate.opsForList().range("roles:" + userId, 0, -1);
 		} catch (Exception e) {
 			logger.warn("Failed to retrieve cached role for user {} : {} ", userId, e.getMessage());
 			return null;

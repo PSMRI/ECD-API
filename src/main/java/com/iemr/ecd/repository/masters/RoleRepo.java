@@ -35,5 +35,5 @@ public interface RoleRepo extends CrudRepository<Role, Integer> {
 	
 	List<Role> findByPsmIdAndDeleted(Integer psmId, Boolean deleted);
 	@Query(nativeQuery = true,value = "select rolename from m_role where roleid in (select roleid from m_userservicerolemapping where userid=:userID)")
-	String getRoleNamebyUserId(@Param("userID") Long userID);
+	List<String> getRoleNamebyUserId(@Param("userID") Long userID);
 }

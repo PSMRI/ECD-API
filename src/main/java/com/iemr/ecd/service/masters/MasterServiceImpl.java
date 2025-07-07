@@ -229,13 +229,13 @@ public class MasterServiceImpl {
 		return v_GetUserlangmappingRepo.findByUserId(userId);
 	}
 
-	public String getUserRole(Long userId) {
+	public List<String> getUserRoles(Long userId) {
 		if (null == userId || userId <= 0) {
 			throw new IllegalArgumentException("Invalid User ID : " + userId);
 		}
 		try {
-			String role = roleRepo.getRoleNamebyUserId(userId);
-			if (null == role || role.trim().isEmpty()) {
+			List<String> role = roleRepo.getRoleNamebyUserId(userId);
+			if (null == role || role.isEmpty()) {
 				throw new ECDException("No role found for userId : " + userId);
 			}
 			return role;
