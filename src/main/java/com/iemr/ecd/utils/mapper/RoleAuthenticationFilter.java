@@ -58,8 +58,19 @@ public class RoleAuthenticationFilter extends OncePerRequestFilter {
 			}
 			Object userIdObj = extractAllClaims.get("userId");
 			String userId = userIdObj != null ? userIdObj.toString() : null;
-
-			authRoles = redisService.getUserRoleFromCache(Long.valueOf(userId));
+			if (null == userId || userId.trim().isEmpty()) {
+				filterChain.doFilter(request, response);
+				return;
+			}
+			Long userIdLong;
+			try {
+				userIdLong=Long.valueOf(userId);
+			}catch (NumberFormatException ex) {
+				logger.warn("Invalid userId format: {}",userId);
+				filterChain.doFilter(request, response);
+				return;
+			}
+			authRoles = redisService.getUserRoleFromCache(userIdLong);
 			if (authRoles == null || authRoles.isEmpty()) {
 			    List<String> roles = userService.getUserRoles(Long.valueOf(userId)); // assuming this returns multiple roles
 			    authRoles = roles.stream()
