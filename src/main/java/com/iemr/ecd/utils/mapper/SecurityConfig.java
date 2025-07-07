@@ -29,24 +29,24 @@ public class SecurityConfig {
 	    this.customAccessDeniedHandler = customAccessDeniedHandler;
 	}
 
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    CookieCsrfTokenRepository csrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-	    csrfTokenRepository.setCookieHttpOnly(true); // Fixes the security hotspot
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    CookieCsrfTokenRepository csrfTokenRepository = new CookieCsrfTokenRepository();
+    csrfTokenRepository.setCookieHttpOnly(true);
+    csrfTokenRepository.setCookiePath("/");
+    http
+        .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/user/*").permitAll()
+            .anyRequest().authenticated()
+        )
+        .exceptionHandling(ex -> ex
+            .authenticationEntryPoint(customAuthenticationEntryPoint)
+            .accessDeniedHandler(customAccessDeniedHandler)
+        )
+        .addFilterBefore(roleAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
-	    http
-	        .csrf(csrf -> csrf.csrfTokenRepository(csrfTokenRepository))
-	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers("/user/*").permitAll()
-	            .anyRequest().authenticated()
-	        )
-	        .exceptionHandling(ex -> ex
-	            .authenticationEntryPoint(customAuthenticationEntryPoint)
-	            .accessDeniedHandler(customAccessDeniedHandler)
-	        )
-	        .addFilterBefore(roleAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-	    return http.build();
-	}
+    return http.build();
+}
 }
