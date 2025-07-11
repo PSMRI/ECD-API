@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +48,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-@CrossOrigin
 @RequestMapping({ "/ecdReportController" })
 @RestController
 public class ReportController {
@@ -87,7 +86,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD call summary report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDCallSummaryReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getCallSummaryReport(@RequestBody String jsonRequest) {
@@ -111,7 +109,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD cumulative district report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDCumulativeDistrictReport", method = RequestMethod.POST)
 	public ResponseEntity<Object> getCumulativeDistrictReport(@RequestBody String jsonRequest) {
@@ -136,7 +133,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD beneficiary wise follow up details report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDBeneficiarywisefollowupdetailsReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getBeneficiarywisefollowupdetails(@RequestBody String jsonRequest) {
@@ -160,7 +156,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD call detail report unique", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDCallDetailReportUnique", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getCallDetailReportUnique(@RequestBody String requestObj) {
@@ -185,7 +180,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD birth defect report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDBirthDefectReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getBirthDefectReport(@RequestBody String jsonRequest) {
@@ -210,7 +204,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD aasha home visit gap report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDAashaHomeVisitGapReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getAashaHomeVisitGapReport(@RequestBody String jsonRequest) {
@@ -235,7 +228,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD calcium IFA tablet non adherence report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDCalciumIFATabNonadherenceReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getCalciumIFATabNonadherenceReport(@RequestBody String jsonRequest) {
@@ -260,7 +252,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD absence in VHSND report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDAbsenceInVHSNDReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getAbsenceInVHSNDReport(@RequestBody String jsonRequest) {
@@ -285,7 +276,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD vaccine drop out identified report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDVaccineDropOutIdentifiedReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getVaccineDropOutIdentifiedReport(@RequestBody String jsonRequest) {
@@ -310,7 +300,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD vaccine left out identified report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDVaccineLeftOutIdentifiedReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getVaccineLeftOutIdentifiedReport(@RequestBody String jsonRequest) {
@@ -336,7 +325,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD developmental delay report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDDevelopmentalDelayReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getDevelopmentalDelayReport(@RequestBody String jsonRequest) {
@@ -361,7 +349,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD abortion report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDAbortionReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getAbortionReport(@RequestBody String jsonRequest) {
@@ -386,7 +373,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD delivery status report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDDeliveryStatusReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getDeliveryStatusReport(@RequestBody String jsonRequest) {
@@ -411,7 +397,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD high risk pregnancy cases identified report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDHRPCasesIdentifiedReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getHRPCasesIdentifiedReport(@RequestBody String jsonRequest) {
@@ -436,7 +421,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD infants high risk report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDInfantsHighRiskReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getInfantsHighRiskReport(@RequestBody String jsonRequest) {
@@ -461,7 +445,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD maternal death report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDMaternalDeathReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getMaternalDeathReport(@RequestBody String jsonRequest) {
@@ -486,7 +469,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD still birth report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDStillBirthReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getStillBirthReport(@RequestBody String jsonRequest) {
@@ -511,7 +493,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD baby death report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDBabyDeathReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getBabyDeathReport(@RequestBody String jsonRequest) {
@@ -536,7 +517,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD not connected phone list diffrent format report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDNotConnectedPhonelistDiffformatReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getNotConnectedPhonelistDiffformatReport(@RequestBody String jsonRequest) {
@@ -561,7 +541,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECDJSY related complaints report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDJSYRelatedComplaintsReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getJSYRelatedComplaintsReport(@RequestBody String jsonRequest) {
@@ -586,7 +565,6 @@ public class ReportController {
 		}
 	}
 
-	@CrossOrigin
 	@Operation(summary = "Get ECD miscarriage report", description = "Desc - Get call details report")
 	@RequestMapping(value = "/getECDMiscarriageReport", method = RequestMethod.POST, headers = "Authorization")
 	public ResponseEntity<Object> getMiscarriageReport(@RequestBody String jsonRequest) {

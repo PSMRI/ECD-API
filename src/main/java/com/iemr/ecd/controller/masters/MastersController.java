@@ -26,7 +26,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -60,7 +60,6 @@ import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
 @RequestMapping(value = "/master", headers = "Authorization")
-@CrossOrigin()
 public class MastersController {
 	@Autowired
 	private MasterServiceImpl masterServiceImpl;
@@ -234,11 +233,14 @@ public class MastersController {
 		return new ResponseEntity<>(masterServiceImpl.getGenders(), HttpStatus.OK);
 
 	}
+
 	@Operation(summary = "Get agents by role id and preferred language", description = "Fetches agents filtered by both role ID and their preferred language setting")
 	@GetMapping("/getAgentsByRoleIdAndPreferredLanguage/{roleId}/{preferredLanguage}")
 	public ResponseEntity<List<AgentsViewMaster>> getAgentsByRoleIdAndLanguage(
-			@RequestHeader(value = "Authorization") String authorization, @PathVariable Integer roleId, @PathVariable String preferredLanguage) {
-		return new ResponseEntity<>(masterServiceImpl.getAgentByRoleIdAndLanguage(roleId, preferredLanguage), HttpStatus.OK);
+			@RequestHeader(value = "Authorization") String authorization, @PathVariable Integer roleId,
+			@PathVariable String preferredLanguage) {
+		return new ResponseEntity<>(masterServiceImpl.getAgentByRoleIdAndLanguage(roleId, preferredLanguage),
+				HttpStatus.OK);
 
 	}
 }

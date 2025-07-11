@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,7 +55,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
 @RequestMapping(value = "/qualityAudit", headers = "Authorization")
-@CrossOrigin()
 public class QualityAuditController {
 	@Autowired
 	private QualityAuditImpl qualityAuditImpl;
@@ -76,7 +75,7 @@ public class QualityAuditController {
 				HttpStatus.OK);
 
 	}
-	
+
 	@PostMapping(value = "/getQualityAuditorWorklistDatewise", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch quality auditor worklist according to date", description = "Desc - Fetch quality auditor worklist datewise")
 	@ApiResponses(value = {
@@ -89,7 +88,8 @@ public class QualityAuditController {
 	public ResponseEntity<List<QualityAuditorWorklistDatewiseResponseDTO>> getQualityAuditorWorklistDatewise(
 			@RequestBody QualityAuditorWorklistDatewiseRequestDTO qualityAuditorWorklistDatewiseRequestDTO) {
 
-		return new ResponseEntity<>(qualityAuditImpl.getQualityAuditorWorklistDatewise(qualityAuditorWorklistDatewiseRequestDTO),
+		return new ResponseEntity<>(
+				qualityAuditImpl.getQualityAuditorWorklistDatewise(qualityAuditorWorklistDatewiseRequestDTO),
 				HttpStatus.OK);
 
 	}
@@ -167,8 +167,7 @@ public class QualityAuditController {
 
 		return new ResponseEntity<>(qualityAuditImpl.callReaudit(jsnOBJ), HttpStatus.OK);
 	}
-	
-	
+
 	@PostMapping(value = "/getBeneficiaryCasesheet", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch casesheet for beneficiary", description = "Desc - Fetch casesheet for beneficiary")
 	@ApiResponses(value = {
