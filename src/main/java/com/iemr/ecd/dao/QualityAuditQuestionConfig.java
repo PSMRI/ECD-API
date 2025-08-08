@@ -36,7 +36,7 @@ import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -88,5 +88,17 @@ public class QualityAuditQuestionConfig {
 	
 	@Column(name = "isFatalQuestion")
 	private Boolean isFatalQues;
+
+	@Column(name = "Role")
+	private String role;
+	
+	@Transient
+	private List<String> roles;
+
+	public void flattenRoles() {
+		if (roles != null && !roles.isEmpty()) {
+			this.role = String.join(",", roles);
+		}
+	}
 
 }

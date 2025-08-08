@@ -76,4 +76,7 @@ public class V_get_Qualityaudit_SectionQuestionaireValues {
 	@Column(name = "isFatalQuestion")
 	private Boolean isFatalQues;
 
+	@Column(name = "Role")
+	private String role;
+
 }
