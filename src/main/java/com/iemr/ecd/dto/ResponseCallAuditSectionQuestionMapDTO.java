@@ -48,5 +48,5 @@ public class ResponseCallAuditSectionQuestionMapDTO {
 	private Date createdDate;
 	private String modifiedBy;
 	private Date lastModDate;
-
+	private List<String> roles;
 }

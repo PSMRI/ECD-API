@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,10 @@ public class QualityAuditQuestionConfigurationImpl {
 			Set<QualityAuditQuestionnaireValues> optionsSet = null;
 
 			for (QualityAuditQuestionConfig question : qualityAuditQuestionConfig) {
+				if (question.getRoles() != null && !question.getRoles().isEmpty()) {
+                	question.flattenRoles();
+            	}
+
 				if (question.getOptions() != null && question.getOptions().length > 0) {
 					int j = 0;
 					Integer[] scoreArr = question.getScores();
@@ -136,7 +141,9 @@ public class QualityAuditQuestionConfigurationImpl {
 						obj.setModifiedBy(strArr[12]);
 					if (strArr[13] != null)
 						obj.setLastModDate(Timestamp.valueOf(strArr[13]));
-					
+					if (strArr[14] != null && !strArr[14].isEmpty()) {
+    					obj.setRoles(Arrays.asList(strArr[14].split(",")));
+					}
 
 					List<QualityAuditQuestionnaireValues> optionsList = qualityAuditQuestionnaireValuesRepo
 							.findByQuestionIdAndPsmIdAndDeleted(obj.getQuestionId(), obj.getPsmId(), false);
@@ -166,7 +173,9 @@ public class QualityAuditQuestionConfigurationImpl {
 		try {
 			QualityAuditQuestionnaireValues questionnaireOptions;
 			Set<QualityAuditQuestionnaireValues> optionsSet = new HashSet<>();
-
+			if (qualityAuditQuestionnaire.getRoles() != null && !qualityAuditQuestionnaire.getRoles().isEmpty()) {
+				qualityAuditQuestionnaire.flattenRoles();
+			}
 			qualityAuditQuestionConfigRepo.save(qualityAuditQuestionnaire);
 
 			List<QualityAuditQuestionnaireValues> optionsValue = qualityAuditQuestionnaireValuesRepo
