@@ -123,7 +123,7 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	// un-allocated, mother high risk,
 	@Query(value = " SELECT count(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND "
+			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
 			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
 			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true "
 			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")

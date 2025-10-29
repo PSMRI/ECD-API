@@ -53,6 +53,9 @@ import com.iemr.ecd.utils.advice.exception_handler.ECDException;
 import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
 import com.iemr.ecd.utils.constants.Constants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -66,6 +69,7 @@ public class CallAllocationImpl {
 	private ChildRecordRepo childRecordRepo;
 	@Autowired
 	private CallConfigurationRepo callConfigurationRepo;
+	private final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 	@Transactional(rollbackOn = Exception.class)
 	public String allocateCalls(RequestCallAllocationDTO callAllocationDto) {
@@ -556,7 +560,6 @@ public class CallAllocationImpl {
 						tempTDateStamp, phoneNoType);
 
 			} else if (recordType != null && recordType.equalsIgnoreCase("Child")) {
-
 				totalIntroductoryRecord = childRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
 
@@ -564,6 +567,8 @@ public class CallAllocationImpl {
 						tempTDateStamp, phoneNoType);
 				totalHighRisk = outboundCallsRepo.getChildUnAllocatedCountHR("unallocated", psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
+						logger.info("Params="+psmId+","+tempFDateStamp+","+tempTDateStamp+","+phoneNoType);
+						logger.info("High risk count: "+totalHighRisk);
 
 				totalAllocated = outboundCallsRepo.getTotalAllocatedCountChild("allocated", psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
