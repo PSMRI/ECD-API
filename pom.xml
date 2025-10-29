@@ -11,7 +11,7 @@
 	</parent>
 	<groupId>com.iemr.ecd</groupId>
 	<artifactId>ecd-api</artifactId>
-	<version>3.1.0</version>
+	<version>3.9.0</version>
 	<packaging>war</packaging>
 	<name>ECD-API</name>
 	<description>ECD project</description>
@@ -38,14 +38,23 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
-			<exclusions>
+			<!-- <exclusions>
 				<exclusion>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
-			</exclusions>
+			</exclusions> -->
 		</dependency>
-
+<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.version}</version>
+			</dependency>
 		<dependency>
 			<groupId>co.elastic.logging</groupId>
 			<artifactId>logback-ecs-encoder</artifactId>
