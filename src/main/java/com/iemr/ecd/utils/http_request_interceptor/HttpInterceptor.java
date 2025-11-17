@@ -23,9 +23,12 @@ package com.iemr.ecd.utils.http_request_interceptor;
 
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,6 +42,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class HttpInterceptor implements HandlerInterceptor {
 	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+	@Value("${cors.allowed-origins}")
+	private String allowedOrigins;
+	
 	@Autowired
 	private RedisStorage redisStorage;
 
@@ -97,9 +104,13 @@ public class HttpInterceptor implements HandlerInterceptor {
 				response.getOutputStream().print(output.toString());
 
 				response.setContentType(MediaType.APPLICATION_JSON);
-
-				// response.setContentLength(e.getLocalizedMessage().length());
-				response.setHeader("Access-Control-Allow-Origin", "*");
+				String origin = request.getHeader("Origin");
+				if (origin != null && isOriginAllowed(origin)) {
+					response.setHeader("Access-Control-Allow-Origin", origin);
+					response.setHeader("Access-Control-Allow-Credentials", "true");
+				} else if (origin != null) {
+					logger.warn("CORS headers NOT added for error response | Unauthorized origin: {}", origin);
+				}
 				status = false;
 			}
 		}
@@ -136,6 +147,28 @@ public class HttpInterceptor implements HandlerInterceptor {
 			throws Exception {
 		logger.info("http interceptor - after completion");
 
+	}
+
+	/**
+	 * Check if the given origin is allowed based on configured allowedOrigins.
+	 * Uses the same logic as JwtUserIdValidationFilter for consistency.
+	 * 
+	 * @param origin The origin to validate
+	 * @return true if origin is allowed, false otherwise
+	 */
+	private boolean isOriginAllowed(String origin) {
+		if (origin == null || allowedOrigins == null || allowedOrigins.trim().isEmpty()) {
+			return false;
+		}
+
+		return Arrays.stream(allowedOrigins.split(","))
+				.map(String::trim)
+				.anyMatch(pattern -> {
+					String regex = pattern
+							.replace(".", "\\.")
+							.replace("*", ".*");
+					return origin.matches(regex);
+				});
 	}
 
 }
