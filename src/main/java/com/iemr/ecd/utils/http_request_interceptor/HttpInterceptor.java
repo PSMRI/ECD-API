@@ -166,7 +166,8 @@ public class HttpInterceptor implements HandlerInterceptor {
 				.anyMatch(pattern -> {
 					String regex = pattern
 							.replace(".", "\\.")
-							.replace("*", ".*");
+							.replace("*", ".*")
+						    .replace("http://localhost:.*", "http://localhost:\\d+");
 					return origin.matches(regex);
 				});
 	}
