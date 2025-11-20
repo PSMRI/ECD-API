@@ -11,10 +11,15 @@
 * This program is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see https://www.gnu.org/licenses/.
 
 */
  
 package com.iemr.ecd.service.data_upload; 
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,11 +37,9 @@ import com.iemr.ecd.utils.advice.exception_handler.InvalidRequestException;
 import jakarta.transaction.Transactional;
  
 @Service
-
 public class DataTemplateServiceImpl {
  
     @Autowired
-
     private DataTemplateRepo dataTemplateRepo;
  
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("xls", "xlsx", "xlsm", "xlsb");
@@ -94,7 +97,6 @@ public class DataTemplateServiceImpl {
  
  
 @Transactional(rollbackOn = Exception.class)
-
 public String uploadTemplate(DataTemplate dataTemplate) {
 
     try {
