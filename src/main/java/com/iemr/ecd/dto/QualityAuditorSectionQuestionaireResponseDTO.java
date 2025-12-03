@@ -54,6 +54,5 @@ public class QualityAuditorSectionQuestionaireResponseDTO {
 	
 	private List<String> options;
 	private List<Integer> scores;
-	
-
+	private List<String> roles;	
 }
