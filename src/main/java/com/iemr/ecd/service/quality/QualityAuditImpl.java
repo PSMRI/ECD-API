@@ -366,7 +366,9 @@ public class QualityAuditImpl {
 				for (V_get_Qualityaudit_SectionQuestionaireValues obj : resultList) {
 					if (qId == 0 || qId != obj.getQuestionId()) {
 						responseDTO = new ResponseCallAuditSectionQuestionMapDTO();
-
+						if(obj.getRole() != null && !obj.getRole().isEmpty()) {
+							responseDTO.setRoles(Arrays.asList(obj.getRole().split(",")));
+						}
 						responseDTO.setSectionId(obj.getSectionId());
 						if (obj.getSectionName() != null)
 							responseDTO.setSectionName(obj.getSectionName());
