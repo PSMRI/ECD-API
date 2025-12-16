@@ -550,7 +550,8 @@ public class CallAllocationImpl {
 
 				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR(Constants.UNALLOCATED, psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
-				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR(Constants.UNALLOCATED, psmId,phoneNoType);
+				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
 
 				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother(Constants.ALLOCATED, psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
