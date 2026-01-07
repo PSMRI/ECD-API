@@ -131,16 +131,17 @@ public class RCHDataUploadServiceImpl {
 	private String getMotherValidRecords(Sheet sheet, int psmId, String createdBy) {
 		ArrayList<MotherRecord> motherRecordList = new ArrayList<>();
 		MotherRecord motherRecord;
-
 		Set<Long> motherEcdIdSet = new HashSet<>();
+		int duplicateCount = 0;
+		int invalidCount = 0;
+		int totalRows = 0;
 		try {
-
 			for (Row row : sheet) {
 				try {
 					if (row.getRowNum() == 0) {
 						// ignore this row, as this is header
-						// System.out.println(row.getRowNum());
 					} else {
+						totalRows++;
 						motherRecord = new MotherRecord();
 
 //						if (row.getCell(14) != null && !row.getCell(14).getCellType().equals(CellType.BLANK))
@@ -163,24 +164,27 @@ public class RCHDataUploadServiceImpl {
 
 								motherRecord.setEcdIdNo(d.longValue());
 							}
-							if (motherEcdIdSet.contains(motherRecord.getEcdIdNo()))
+							if (motherEcdIdSet.contains(motherRecord.getEcdIdNo())) {
+								duplicateCount++;
 								continue;
-							else
+							} else
 								motherEcdIdSet.add(motherRecord.getEcdIdNo());
-							if(motherRecord.getEcdIdNo().toString().length() != 12) {
+							if (motherRecord.getEcdIdNo().toString().length() != 12) {
 								logger.info("registration no is not valid : " + row.getRowNum());
+								invalidCount++;
 								continue;
 							}
-
 							MotherRecord mr = motherRecordRepo.findByEcdIdNo(motherRecord.getEcdIdNo());
-							if (mr == null)
-								;
-							else {
+							if (mr == null) {
+								// valid, continue
+							} else {
 								logger.info("mother record already exist in AMRIT : " + motherRecord.getEcdIdNo());
+								duplicateCount++;
 								continue;
 							}
 						} else {
 							logger.info("mother rch id no is blank : " + row.getRowNum());
+							invalidCount++;
 							continue;
 						}
 
@@ -196,6 +200,7 @@ public class RCHDataUploadServiceImpl {
 
 							} else {
 								logger.info("invalid data - phone no not as per required : " + row.getRowNum());
+								invalidCount++;
 								continue;
 							}
 
@@ -321,8 +326,10 @@ public class RCHDataUploadServiceImpl {
 							}
 						}
 
-						if (motherRecord.getLandlineNo() == null && motherRecord.getPhoneNo() == null)
+						if (motherRecord.getLandlineNo() == null && motherRecord.getPhoneNo() == null) {
+							invalidCount++;
 							continue;
+						}
 
 						if (row.getCell(69) != null && !row.getCell(69).getCellType().equals(CellType.BLANK))
 							motherRecord.setMotherWeight((int) row.getCell(69).getNumericCellValue());
@@ -474,6 +481,7 @@ public class RCHDataUploadServiceImpl {
 					}
 				} catch (Exception e) {
 					logger.error("exception in record no: " + row.getRowNum() + " - " + e);
+					invalidCount++;
 				}
 			}
 		} catch (Exception e) {
@@ -482,10 +490,12 @@ public class RCHDataUploadServiceImpl {
 
 		if (motherRecordList.size() > 0) {
 			motherRecordRepo.saveAll(motherRecordList);
-			return motherRecordList.size() + " valid mother records are uploaded in AMRIT";
-		} else
-			return "No valid mother record found to upload";
-
+			return motherRecordList.size() + " valid mother records are uploaded in AMRIT. " + duplicateCount
+					+ " duplicate records skipped. " + invalidCount + " invalid records skipped.";
+		} else {
+			return "No valid mother record found to upload. " + duplicateCount + " duplicate records skipped. "
+					+ invalidCount + " invalid records skipped.";
+		}
 	}
 
 	private String getChildValidRecords(Sheet sheet, int psmId, String createdBy) {
