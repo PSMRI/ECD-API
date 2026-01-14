@@ -290,36 +290,36 @@ public class CallClosureImpl {
 
 	}
 
-	private void updatePreferredLanguage(CallClosureDTO request,OutboundCalls callObj,boolean isLanguageMapped) {
+	private void updatePreferredLanguage(CallClosureDTO request, OutboundCalls callObj, boolean isLanguageMapped) {
 		String preferredLanguage = request.getPreferredLanguage();
-		   if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
-		       return;
-		   }
-		    boolean isMother = callObj.getMotherId() != null;
-		    boolean isChild = callObj.getChildId() != null;
-		    
-			if (isMother && !isChild) {
-				try {
-					motherRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getMotherId());
-					if (!isLanguageMapped) {
-						motherRecordRepo.updateAllocatedStatus(false, callObj.getMotherId());
-					}
-				} catch (Exception e) {
-					logger.error("Failed to update mother's preferred language", e);
-					throw new ECDException("Failed to update mother's preferred language: " + e.getMessage());
-				}
+		if (preferredLanguage == null || preferredLanguage.trim().isEmpty()) {
+			return;
+		}
+		boolean isMother = callObj.getMotherId() != null;
+		boolean isChild = callObj.getChildId() != null;
+
+		if (isMother && !isChild) {
+			try {
+				motherRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getMotherId());
+				// if (!isLanguageMapped) {
+				// motherRecordRepo.updateAllocatedStatus(false, callObj.getMotherId());
+				// }
+			} catch (Exception e) {
+				logger.error("Failed to update mother's preferred language", e);
+				throw new ECDException("Failed to update mother's preferred language: " + e.getMessage());
 			}
-			if (isChild) {
-				try {
-					childRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getChildId());
-					if (!isLanguageMapped) {
-						childRecordRepo.updateAllocatedStatus(false, callObj.getChildId());
-					}
-				} catch (Exception e) {
-					logger.error("Failed to update child's preferred language", e);
-					throw new ECDException("Failed to update child's preferred language: " + e.getMessage());
-				}
+		}
+		if (isChild) {
+			try {
+				childRecordRepo.updatePreferredLanguage(preferredLanguage, callObj.getChildId());
+				// if (!isLanguageMapped) {
+				// childRecordRepo.updateAllocatedStatus(false, callObj.getChildId());
+				// }
+			} catch (Exception e) {
+				logger.error("Failed to update child's preferred language", e);
+				throw new ECDException("Failed to update child's preferred language: " + e.getMessage());
 			}
+		}
 	}
 
 	private boolean isLanguageMappedWithUser(CallClosureDTO request) {
