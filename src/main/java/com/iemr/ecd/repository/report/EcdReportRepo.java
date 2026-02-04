@@ -94,10 +94,10 @@ public interface EcdReportRepo extends CrudRepository<EcdReport, Long> {
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
 			@Param("psmId") Integer psmId);
 	
-	@Query(value="call db_reporting.Pr_ECDAbortionReport(:startDate,:endDate,:agentId,:psmId,:role)", nativeQuery=true)
+	@Query(value="call db_reporting.Pr_ECDAbortionReport(:startDate,:endDate,:agentId,:psmId)", nativeQuery=true)
 	public List<Object[]> getAbortionReport(@Param("startDate") Timestamp startDate,
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
-			@Param("psmId") Integer psmId, @Param("role") String role);
+			@Param("psmId") Integer psmId);
 
 	
 	@Query(value="call db_reporting.Pr_ECDDeliveryStatusReport(:startDate,:endDate,:agentId,:psmId)", nativeQuery=true)
@@ -120,10 +120,10 @@ public interface EcdReportRepo extends CrudRepository<EcdReport, Long> {
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
 			@Param("psmId") Integer psmId);
 	
-	@Query(value="call db_reporting.Pr_ECDStillBirthReport(:startDate,:endDate,:agentId,:psmId,:role)", nativeQuery=true)
+	@Query(value="call db_reporting.Pr_ECDStillBirthReport(:startDate,:endDate,:agentId,:psmId)", nativeQuery=true)
 	public List<Object[]> getStillBirthReport(@Param("startDate") Timestamp startDate,
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
-			@Param("psmId") Integer psmId, @Param("role") String role);
+			@Param("psmId") Integer psmId);
 	
 	@Query(value="call db_reporting.Pr_ECDBabyDeathReport(:startDate,:endDate,:agentId,:psmId,:role)", nativeQuery=true)
 	public List<Object[]> getBabyDeathReport(@Param("startDate") Timestamp startDate,
