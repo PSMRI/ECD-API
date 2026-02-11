@@ -813,7 +813,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(babyDeathReport.getRole());
 			
 			result = ecdReportRepo.getBabyDeathReport(startDate, endDate, babyDeathReport.getAgentId(),
-					babyDeathReport.getPsmId(), babyDeathReport.getRole());
+					babyDeathReport.getPsmId());
 			if (result != null && !result.isEmpty())
 				response = ExcelHelper.tutorialsToExcel(headers, result, c, criteriaColumns);
 			else
