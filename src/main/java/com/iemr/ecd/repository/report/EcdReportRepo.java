@@ -125,10 +125,10 @@ public interface EcdReportRepo extends CrudRepository<EcdReport, Long> {
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
 			@Param("psmId") Integer psmId);
 	
-	@Query(value="call db_reporting.Pr_ECDBabyDeathReport(:startDate,:endDate,:agentId,:psmId,:role)", nativeQuery=true)
+	@Query(value="call db_reporting.Pr_ECDBabyDeathReport(:startDate,:endDate,:agentId,:psmId)", nativeQuery=true)
 	public List<Object[]> getBabyDeathReport(@Param("startDate") Timestamp startDate,
 			@Param("endDate") Timestamp endDate, @Param("agentId") Integer agentId,
-			@Param("psmId") Integer psmId, @Param("role") String role);
+			@Param("psmId") Integer psmIde);
 	
 	@Query(value="call db_reporting.Pr_ECDNotConnectedPhonelistDiffformatReport(:startDate,:endDate,:agentId,:psmId)", nativeQuery=true)
 	public List<Object[]> getNotConnectedPhonelistDiffformatReport(@Param("startDate") Timestamp startDate,
