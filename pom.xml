@@ -445,10 +445,6 @@
 						<property>^git.commit.id.abbrev$</property>
 						<property>^git.build.version$</property>
 						<property>^git.build.time$</property>
-						<property>^git.commit.message.short$</property>
-						<property>^git.commit.user.name$</property>
-						<property>^git.dirty$</property>
-						<property>^git.total.commit.count$</property>
 					</includeOnlyProperties>
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 					<failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
