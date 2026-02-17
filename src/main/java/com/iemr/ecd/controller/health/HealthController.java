@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import com.iemr.ecd.service.health.HealthService;
+import com.iemr.ecd.utils.constants.Constants;
 import com.iemr.ecd.utils.mapper.JwtAuthenticationUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,22 +71,49 @@ public class HealthController {
     }
 
     private boolean isUserAuthenticated(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || authHeader.trim().isEmpty()) {
-            return false;
+        String token = null;
+        
+        // First, try to get token from Jwttoken header
+        token = request.getHeader(Constants.JWT_TOKEN);
+        
+        // If not found, try Authorization header
+        if (token == null || token.trim().isEmpty()) {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && !authHeader.trim().isEmpty()) {
+                // Extract token from "Bearer <token>" format
+                token = authHeader.startsWith("Bearer ") 
+                    ? authHeader.substring(7) 
+                    : authHeader;
+            }
         }
         
-        // Extract token from "Bearer <token>" format
-        String token = authHeader.startsWith("Bearer ") 
-            ? authHeader.substring(7) 
-            : authHeader;
-        
-        try {
-            // Validate JWT token - returns true if valid, throws exception if invalid
-            return jwtAuthenticationUtil.validateUserIdAndJwtToken(token);
-        } catch (Exception e) {
-            logger.debug("JWT token validation failed: {}", e.getMessage());
-            return false;
+        // If still not found, try to get from cookies
+        if (token == null || token.trim().isEmpty()) {
+            token = getJwtTokenFromCookies(request);
         }
+        
+        // Validate the token if found
+        if (token != null && !token.trim().isEmpty()) {
+            try {
+                return jwtAuthenticationUtil.validateUserIdAndJwtToken(token);
+            } catch (Exception e) {
+                logger.debug("JWT token validation failed: {}", e.getMessage());
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    private String getJwtTokenFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equalsIgnoreCase(Constants.JWT_TOKEN)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

@@ -33,7 +33,7 @@ public class HealthService {
     private static final String STATUS_DOWN = "DOWN";
     private static final String UNKNOWN_VALUE = "unknown";
     private static final int REDIS_TIMEOUT_SECONDS = 3;
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(4);
 
     private final DataSource dataSource;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -44,8 +44,8 @@ public class HealthService {
     public HealthService(DataSource dataSource,
                         @Autowired(required = false) RedisTemplate<String, Object> redisTemplate,
                         @Value("${spring.datasource.url:unknown}") String dbUrl,
-                        @Value("${spring.redis.host:localhost}") String redisHost,
-                        @Value("${spring.redis.port:6379}") int redisPort) {
+                        @Value("${spring.data.redis.host:localhost}") String redisHost,
+                        @Value("${spring.data.redis.port:6379}") int redisPort) {
         this.dataSource = dataSource;
         this.redisTemplate = redisTemplate;
         this.dbUrl = dbUrl;
