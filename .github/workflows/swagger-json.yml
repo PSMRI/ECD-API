@@ -97,7 +97,7 @@ jobs:
         with:
           token: ${{ secrets.DOCS_REPO_TOKEN }}
           path: amrit-docs
-          branch: auto/swagger-update-${{ github.run_id }}-${{ github.run_attempt }}
+          branch: auto/swagger-update-ecd-api
           base: main
           commit-message: "chore(docs): auto-update ECD-API swagger"
           title: "chore(docs): auto-update ECD-API swagger"
@@ -105,3 +105,4 @@ jobs:
           body: |
             This PR automatically updates ECD-API Swagger JSON
             from the latest main branch build.
+            
