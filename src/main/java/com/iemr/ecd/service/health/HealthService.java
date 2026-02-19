@@ -93,17 +93,18 @@ public class HealthService {
         Map<String, Object> status = new LinkedHashMap<>();
 
         return performHealthCheck("Redis", status, () -> {
+            CompletableFuture<String> future = CompletableFuture.supplyAsync(
+                () -> redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()),
+                executorService);
             try {
-                String pong = CompletableFuture.supplyAsync(() ->
-                    redisTemplate.execute((RedisCallback<String>) connection -> connection.ping()),
-                    executorService
-                ).get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                String pong = future.get(REDIS_TIMEOUT_SECONDS, TimeUnit.SECONDS);
                 
                 if ("PONG".equals(pong)) {
                     return new HealthCheckResult(true, null);
                 }
                 return new HealthCheckResult(false, "Ping returned unexpected response");
             } catch (TimeoutException e) {
+                future.cancel(true);
                 return new HealthCheckResult(false, "Redis ping timed out after " + REDIS_TIMEOUT_SECONDS + " seconds");
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
