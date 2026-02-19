@@ -133,6 +133,7 @@ public class HealthService {
                 String safeError = result.error != null ? result.error : "Health check failed";
                 logger.warn("{} health check failed: {}", componentName, safeError);
                 status.put(STATUS_KEY, STATUS_DOWN);
+                status.put("error", safeError);
             }
             
             return status;
@@ -143,6 +144,7 @@ public class HealthService {
             
             status.put(STATUS_KEY, STATUS_DOWN);
             status.put("responseTimeMs", responseTime);
+            status.put("error", "Health check failed with an unexpected error");
             
             return status;
         }
