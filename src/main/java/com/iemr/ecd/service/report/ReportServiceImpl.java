@@ -935,7 +935,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(miscarriageReport.getRole());
 			
 			result = ecdReportRepo.getMiscarriageReport(startDate, endDate, miscarriageReport.getAgentId(),
-					miscarriageReport.getPsmId(), miscarriageReport.getRole());
+					miscarriageReport.getPsmId());
 
 			if (result != null && !result.isEmpty())
 				response = ExcelHelper.tutorialsToExcel(headers, result, c, criteriaColumns);
