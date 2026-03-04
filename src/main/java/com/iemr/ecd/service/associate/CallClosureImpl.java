@@ -385,6 +385,21 @@ public class CallClosureImpl {
 					&& request.getEcdCallType().equalsIgnoreCase("introductory")) {
 				if (callConfigurationDetails != null && callConfigurationDetails.size() > 0) {
 
+					// Check if ANC/ECD calls already exist for this mother/child to prevent duplicate creation
+					if (request.getChildId() != null) {
+						int existingChildCalls = outboundCallsRepo.countNonIntroductoryCallsForChild(request.getChildId());
+						if (existingChildCalls > 0) {
+							logger.info("ECD calls already exist for childId: {}, skipping duplicate creation", request.getChildId());
+							return "already created";
+						}
+					} else if (request.getMotherId() != null) {
+						int existingMotherCalls = outboundCallsRepo.countNonIntroductoryCallsForMother(request.getMotherId());
+						if (existingMotherCalls > 0) {
+							logger.info("ANC calls already exist for motherId: {}, skipping duplicate creation", request.getMotherId());
+							return "already created";
+						}
+					}
+
 					ChildRecord childRecord = null;
 					MotherRecord motherRecord = null;
 					if (request.getChildId() != null) {

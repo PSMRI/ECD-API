@@ -45,14 +45,20 @@ public interface MotherRecordRepo extends CrudRepository<MotherRecord, Long> {
 	public List<MotherRecord> findByIsAllocatedAndWhomPhoneNoAndCreatedDateBetween(Boolean isAllocated,
 			String phoneType, Timestamp fromDate, Timestamp toDate);
 
-	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
-			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType AND preferredLanguage = :preferredLanguage LIMIT :recordLimit ", nativeQuery = true)
+	@Query(value = " SELECT * FROM t_mothervalidrecord m WHERE m.IsAllocated is false AND "
+			+ " m.CreatedDate BETWEEN :fDate AND :tDate AND m.PhoneNo_Of_Whom =:phoneType AND m.preferredLanguage = :preferredLanguage "
+			+ " AND NOT EXISTS (SELECT 1 FROM t_mctsoutboundcalls oc WHERE oc.MotherID = m.MCTSID_no "
+			+ " AND oc.DisplayOBCallType = 'introductory' AND oc.Deleted = 0) "
+			+ " LIMIT :recordLimit ", nativeQuery = true)
 	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit, @Param("preferredLanguage") String preferredLanguage);
 
-	@Query(value = " SELECT * FROM t_mothervalidrecord WHERE IsAllocated is false AND "
-			+ " CreatedDate BETWEEN :fDate AND :tDate AND PhoneNo_Of_Whom =:phoneType LIMIT :recordLimit ", nativeQuery = true)
+	@Query(value = " SELECT * FROM t_mothervalidrecord m WHERE m.IsAllocated is false AND "
+			+ " m.CreatedDate BETWEEN :fDate AND :tDate AND m.PhoneNo_Of_Whom =:phoneType "
+			+ " AND NOT EXISTS (SELECT 1 FROM t_mctsoutboundcalls oc WHERE oc.MotherID = m.MCTSID_no "
+			+ " AND oc.DisplayOBCallType = 'introductory' AND oc.Deleted = 0) "
+			+ " LIMIT :recordLimit ", nativeQuery = true)
 	public List<MotherRecord> getMotherRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit);

@@ -23,7 +23,9 @@ package com.iemr.ecd.service.outbound_worklist;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,29 @@ public class OutboundWorkListServiceImpl {
 		try {
 			List<String[]> motherList = outboundCallsRepo.getAgentAllocatedMotherList(userId);
 
-			return getMotherDtoList(motherList);
+			// Deduplicate by motherId (index 9: MCTSID_no) + callType (index 4: OutboundCallType)
+			// to handle existing duplicate ANC records created from multiple introductory calls.
+			// Keeps the record with the highest OBCallID (index 0) i.e. the latest one.
+			Map<String, String[]> uniqueMap = new LinkedHashMap<>();
+			for (String[] row : motherList) {
+				String motherId = row[9] != null ? row[9] : "";
+				String callType = row[4] != null ? row[4] : "";
+				String key = motherId + "_" + callType;
+
+				String[] existing = uniqueMap.get(key);
+				if (existing == null) {
+					uniqueMap.put(key, row);
+				} else {
+					// Keep the record with the higher OBCallID (latest)
+					long existingId = Long.parseLong(existing[0]);
+					long currentId = Long.parseLong(row[0]);
+					if (currentId > existingId) {
+						uniqueMap.put(key, row);
+					}
+				}
+			}
+
+			return getMotherDtoList(new ArrayList<>(uniqueMap.values()));
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}

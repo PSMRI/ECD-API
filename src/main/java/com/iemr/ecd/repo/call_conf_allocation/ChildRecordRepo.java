@@ -40,14 +40,20 @@ public interface ChildRecordRepo extends CrudRepository<ChildRecord, Long> {
 	public List<ChildRecord> findByIsAllocatedAndWhomPhoneNoAndCreatedDateBetween(Boolean isAllocated, String phoneType,
 			Timestamp fromDate, Timestamp toDate);
 
-	@Query(value = " SELECT * FROM t_childvaliddata WHERE IsAllocated is false AND "
-			+ " CreatedDate BETWEEN :fDate AND :tDate AND Phone_No_of =:phoneType AND preferredLanguage =:preferredLanguage LIMIT :recordLimit ", nativeQuery = true)
+	@Query(value = " SELECT * FROM t_childvaliddata c WHERE c.IsAllocated is false AND "
+			+ " c.CreatedDate BETWEEN :fDate AND :tDate AND c.Phone_No_of =:phoneType AND c.preferredLanguage =:preferredLanguage "
+			+ " AND NOT EXISTS (SELECT 1 FROM t_mctsoutboundcalls oc WHERE oc.ChildID = c.MCTSID_no_Child_ID "
+			+ " AND oc.DisplayOBCallType = 'introductory' AND oc.Deleted = 0) "
+			+ " LIMIT :recordLimit ", nativeQuery = true)
 	public List<ChildRecord> getChildRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit, @Param("preferredLanguage") String preferredLanguage);
 
-	@Query(value = " SELECT * FROM t_childvaliddata WHERE IsAllocated is false AND "
-			+ " CreatedDate BETWEEN :fDate AND :tDate AND Phone_No_of =:phoneType LIMIT :recordLimit ", nativeQuery = true)
+	@Query(value = " SELECT * FROM t_childvaliddata c WHERE c.IsAllocated is false AND "
+			+ " c.CreatedDate BETWEEN :fDate AND :tDate AND c.Phone_No_of =:phoneType "
+			+ " AND NOT EXISTS (SELECT 1 FROM t_mctsoutboundcalls oc WHERE oc.ChildID = c.MCTSID_no_Child_ID "
+			+ " AND oc.DisplayOBCallType = 'introductory' AND oc.Deleted = 0) "
+			+ " LIMIT :recordLimit ", nativeQuery = true)
 	public List<ChildRecord> getChildRecordForAllocation(@Param("fDate") Timestamp fDate,
 			@Param("tDate") Timestamp tDate, @Param("phoneType") String phoneType,
 			@Param("recordLimit") int recordLimit);

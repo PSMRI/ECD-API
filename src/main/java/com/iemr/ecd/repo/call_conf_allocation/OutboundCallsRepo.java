@@ -440,5 +440,10 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("allocatedUserId") Integer allocatedUserId, @Param("callStatus") String callStatus,
 			@Param("phoneNoType") String phoneNoType, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,@Param("preferredLanguage") String preferredLanguage);
 
-	
+	@Query("SELECT COUNT(t) FROM OutboundCalls t WHERE t.motherId = :motherId AND t.childId IS NULL AND t.ecdCallType != 'introductory'")
+	int countNonIntroductoryCallsForMother(@Param("motherId") Long motherId);
+
+	@Query("SELECT COUNT(t) FROM OutboundCalls t WHERE t.childId = :childId AND t.ecdCallType != 'introductory'")
+	int countNonIntroductoryCallsForChild(@Param("childId") Long childId);
+
 }
