@@ -224,7 +224,17 @@ public class CallClosureImpl {
 				    }
 				}
 
-				
+				// MO → ANM Reassignment
+				if (Boolean.TRUE.equals(request.getReassignToANM())) {
+				    callObj.setIsHighRisk(false);
+				    callObj.setIsHrni(false);
+				    callObj.setCallStatus(Constants.OPEN);
+				    callObj.setAllocatedUserId(null);
+				    callObj.setAllocationStatus(Constants.UNALLOCATED);
+				    callObj.setCallAttemptNo(0);
+				}
+
+
 				outboundCallsRepo.save(callObj);
 			} else
 				throw new ECDException(
