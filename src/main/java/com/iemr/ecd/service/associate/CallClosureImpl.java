@@ -211,8 +211,16 @@ public class CallClosureImpl {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
 
-				    // Check if the role should be changed to MO
+				    // ANM marks HRP = true → move to MO (high risk) bucket
 				    if (isHrp && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				    }
+
+				    // MO marks HRP = false → move to ANM (low risk) bucket
+				    else if (!isHrp && obj.getReceivedRoleName().equalsIgnoreCase("MO")) {
 				        callObj.setCallStatus(Constants.OPEN);
 				        callObj.setAllocatedUserId(null);
 				        callObj.setAllocationStatus(Constants.UNALLOCATED);
@@ -224,14 +232,17 @@ public class CallClosureImpl {
 				    }
 				}
 
-				// MO → ANM Reassignment
-				if (Boolean.TRUE.equals(request.getReassignToANM())) {
-				    callObj.setIsHighRisk(false);
-				    callObj.setIsHrni(false);
-				    callObj.setCallStatus(Constants.OPEN);
-				    callObj.setAllocatedUserId(null);
-				    callObj.setAllocationStatus(Constants.UNALLOCATED);
-				    callObj.setCallAttemptNo(0);
+				if (request.getIsHrni() != null) {
+				    boolean isHrni = request.getIsHrni();
+				    callObj.setIsHrni(isHrni);
+
+				    // MO marks HRNI = false → move to ANM (low risk) bucket
+				    if (!isHrni && obj.getReceivedRoleName().equalsIgnoreCase("MO")) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				    }
 				}
 
 
