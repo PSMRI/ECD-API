@@ -248,7 +248,7 @@ public class CallClosureImpl {
 				} else if (callObj.getMotherId() != null && callObj.getChildId() == null
 						&& callObj.getIsHighRisk() != null) {
 					// Mother
-					outboundCallsRepo.updateHRPForUpcomingCall(callObj.getMotherId(), callObj.getIsHighRisk());
+					outboundCallsRepo.updateHRPForUpcomingCall(callObj.getMotherId(), callObj.getIsHighRisk(), callObj.getHighRiskReason());
 				}
 			}
 			if (null != obj.getIsFurtherCallRequired()) {

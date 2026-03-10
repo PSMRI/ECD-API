@@ -371,8 +371,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	@Modifying
 	@Transactional
-	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
-	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk);
+	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk, highRiskReason = :highRiskReason WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
+	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk, @Param("highRiskReason") String highRiskReason);
 
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
