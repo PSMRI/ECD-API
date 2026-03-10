@@ -24,8 +24,6 @@ package com.iemr.ecd.service.outbound_worklist;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,30 +43,7 @@ public class OutboundWorkListServiceImpl {
 	public List<FetchMotherOutboundWorklist> getMotherWorkList(Integer userId) {
 		try {
 			List<String[]> motherList = outboundCallsRepo.getAgentAllocatedMotherList(userId);
-			List<FetchMotherOutboundWorklist> result = getMotherDtoList(motherList);
-
-			// Enrich with highRiskReason from OutboundCalls table
-			List<Long> obCallIds = result.stream()
-					.map(FetchMotherOutboundWorklist::getObCallId)
-					.filter(id -> id != null)
-					.collect(Collectors.toList());
-
-			if (!obCallIds.isEmpty()) {
-				List<Object[]> hrpReasons = outboundCallsRepo.getHighRiskReasonByObCallIds(obCallIds);
-				Map<Long, String> reasonMap = hrpReasons.stream()
-						.collect(Collectors.toMap(
-								row -> (Long) row[0],
-								row -> (String) row[1],
-								(existing, replacement) -> existing));
-
-				for (FetchMotherOutboundWorklist item : result) {
-					if (item.getObCallId() != null && reasonMap.containsKey(item.getObCallId())) {
-						item.setHighRiskReason(reasonMap.get(item.getObCallId()));
-					}
-				}
-			}
-
-			return result;
+			return getMotherDtoList(motherList);
 		} catch (Exception e) {
 			throw new ECDException(e);
 		}
