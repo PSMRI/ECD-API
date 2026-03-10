@@ -73,7 +73,5 @@ public class CallClosureDTO {
 	private Boolean isWrongNumber;
     private String preferredLanguage;
     private String correctPhoneNumber;
-    private Boolean reassignToANM;
-    private String reassignCallType;
 
 }
