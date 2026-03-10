@@ -41,6 +41,9 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	OutboundCalls findByObCallId(Long obCallId);
 
+	@Query("SELECT ob.obCallId, ob.highRiskReason FROM OutboundCalls ob WHERE ob.obCallId IN :obCallIds AND ob.highRiskReason IS NOT NULL")
+	List<Object[]> getHighRiskReasonByObCallIds(@Param("obCallIds") List<Long> obCallIds);
+
 	@Query(value = "call PR_FetchECDMotherOutboundWorklist(:allocatedUserID)", nativeQuery = true)
 	List<String[]> getAgentAllocatedMotherList(@Param("allocatedUserID") Integer allocatedUserID);
 
