@@ -108,7 +108,9 @@ public class JwtUserIdValidationFilter implements Filter {
 				|| path.startsWith(contextPath + "/swagger-ui")
 				|| path.startsWith(contextPath + "/v3/api-docs")
 				|| path.startsWith(contextPath + "/user/refreshToken")
-				|| path.startsWith(contextPath + "/public")) {
+				|| path.startsWith(contextPath + "/public")
+				|| path.startsWith(contextPath + "/health")
+				|| path.startsWith(contextPath + "/version")) {
 			logger.info("Skipping filter for path: " + path);
 			filterChain.doFilter(servletRequest, servletResponse);
 			return;
