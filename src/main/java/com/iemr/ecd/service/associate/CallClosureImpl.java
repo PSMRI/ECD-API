@@ -443,7 +443,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+								cal.add(Calendar.DATE, callConfiguration.getTermRange());
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
@@ -451,7 +451,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+								cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
@@ -460,7 +460,7 @@ public class CallClosureImpl {
 
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
-							cal.add(Calendar.DAY_OF_WEEK, 1);
+							cal.add(Calendar.DATE, 1);
 							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 
 						} else if (childRecord != null && childRecord.getDob() != null) {
@@ -480,7 +480,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+								cal.add(Calendar.DATE, callConfiguration.getTermRange());
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
@@ -488,7 +488,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+								cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
@@ -497,7 +497,7 @@ public class CallClosureImpl {
 
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
-							cal.add(Calendar.DAY_OF_WEEK, 1);
+							cal.add(Calendar.DATE, 1);
 							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 						}
 						outboundCalls.setPhoneNumberType(phoneNoType);
