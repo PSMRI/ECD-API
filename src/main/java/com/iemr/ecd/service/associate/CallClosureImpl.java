@@ -159,7 +159,7 @@ public class CallClosureImpl {
 
 				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
 					callObj.setCallStatus(Constants.OPEN);
-					//callObj.setAllocationStatus(Constants.UNALLOCATED);
+					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
 					callObj.setCallStatus(Constants.COMPLETED);
 				}
@@ -168,6 +168,9 @@ public class CallClosureImpl {
 				} else {
 					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
 						callObj.setCallStatus(Constants.OPEN);
+						callObj.setAllocatedUserId(null);  
+						callObj.setAllocationStatus(Constants.UNALLOCATED);  
+						callObj.setCallAttemptNo(0);  
 					} else {
 						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
@@ -211,12 +214,20 @@ public class CallClosureImpl {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
 
-				    // ANM marks HRP = true → move to MO (high risk) bucket
-				    if (isHrp && obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM)) {
+				     // If the call is marked as HRP and the received role is ANM or ASSOCIATE, keep the call open for follow-up actions
+			    if (isHrp && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) 
+					|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
 				        callObj.setCallStatus(Constants.OPEN);
 				        callObj.setAllocatedUserId(null);
 				        callObj.setAllocationStatus(Constants.UNALLOCATED);
 				        callObj.setCallAttemptNo(0);
+            
+            // Generate follow-up calls for disconnected HRP introductory calls
+               if (Boolean.TRUE.equals(obj.getIsCallDisconnected()) 
+                   && "introductory".equalsIgnoreCase(callObj.getEcdCallType())) {
+                    createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails, callObj.getPhoneNumberType());
+                     callObj.setCallStatus(Constants.COMPLETED);
+                }
 				    }
 
 				    // MO marks HRP = false → move to ANM (low risk) bucket
@@ -230,7 +241,7 @@ public class CallClosureImpl {
 				    else if (!isHrp && !obj.getIsCallDisconnected()) {
 				    	callObj.setCallStatus(Constants.COMPLETED);
 				    }
-				}
+        }
 
 				if (request.getIsHrni() != null) {
 				    boolean isHrni = request.getIsHrni();
