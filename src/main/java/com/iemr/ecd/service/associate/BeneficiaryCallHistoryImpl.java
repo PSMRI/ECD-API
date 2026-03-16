@@ -193,17 +193,13 @@ public class BeneficiaryCallHistoryImpl {
 
 			if (childId != null) {
 				Page<ECDCallResponse> page = ecdCallResponseRepo.getHrniDetailsChild(pageable, childId);
-				if (page.getSize() > 0) {
-					List<ECDCallResponse> objLIst = page.getContent();
-					obj = objLIst.get(0);
-
+				if (page.hasContent()) {
+					obj = page.getContent().get(0);
 				}
 			} else if (motherId != null) {
 				Page<ECDCallResponse> page = ecdCallResponseRepo.getHrpDetailsMother(pageable, motherId);
-				if (page.getSize() > 0) {
-					List<ECDCallResponse> objLIst = page.getContent();
-					obj = objLIst.get(0);
-
+				if (page.hasContent()) {
+					obj = page.getContent().get(0);
 				}
 			} else
 				throw new InvalidRequestException("NULL motherId/childId", "send valid motherId or childId");

@@ -214,28 +214,49 @@ public class CallClosureImpl {
 				    boolean isHrp = request.getIsHrp();
 			        callObj.setIsHighRisk(isHrp);
 
-				   
-				 // If the call is marked as HRP and the received role is ANM or ASSOCIATE, keep the call open for follow-up actions
+				     // If the call is marked as HRP and the received role is ANM or ASSOCIATE, keep the call open for follow-up actions
 			    if (isHrp && (obj.getReceivedRoleName().equalsIgnoreCase(Constants.ANM) 
 					|| obj.getReceivedRoleName().equalsIgnoreCase(Constants.ASSOCIATE))) {
-				callObj.setCallStatus(Constants.OPEN);
-				callObj.setAllocatedUserId(null);
-				callObj.setAllocationStatus(Constants.UNALLOCATED);
-				callObj.setCallAttemptNo(0);
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+            
+            // Generate follow-up calls for disconnected HRP introductory calls
+               if (Boolean.TRUE.equals(obj.getIsCallDisconnected()) 
+                   && "introductory".equalsIgnoreCase(callObj.getEcdCallType())) {
+                    createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails, callObj.getPhoneNumberType());
+                     callObj.setCallStatus(Constants.COMPLETED);
+                }
+				    }
 
-				// Generate follow-up calls for disconnected HRP introductory calls
-				if (Boolean.TRUE.equals(obj.getIsCallDisconnected()) 
-						&& "introductory".equalsIgnoreCase(callObj.getEcdCallType())) {
-					createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails, callObj.getPhoneNumberType());
-					callObj.setCallStatus(Constants.COMPLETED);
+				    // MO marks HRP = false → move to ANM (low risk) bucket
+				    else if (!isHrp && obj.getReceivedRoleName().equalsIgnoreCase("MO")) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				    }
+
+				    else if (!isHrp && !obj.getIsCallDisconnected()) {
+				    	callObj.setCallStatus(Constants.COMPLETED);
+				    }
+        }
+
+				if (request.getIsHrni() != null) {
+				    boolean isHrni = request.getIsHrni();
+				    callObj.setIsHrni(isHrni);
+
+				    // MO marks HRNI = false → move to ANM (low risk) bucket
+				    if (!isHrni && obj.getReceivedRoleName().equalsIgnoreCase("MO")) {
+				        callObj.setCallStatus(Constants.OPEN);
+				        callObj.setAllocatedUserId(null);
+				        callObj.setAllocationStatus(Constants.UNALLOCATED);
+				        callObj.setCallAttemptNo(0);
+				    }
 				}
 
-			} else if (!isHrp && !obj.getIsCallDisconnected()) {
-				callObj.setCallStatus(Constants.COMPLETED);
-			}
-				}
 
-				
 				outboundCallsRepo.save(callObj);
 			} else
 				throw new ECDException(
@@ -249,7 +270,7 @@ public class CallClosureImpl {
 				} else if (callObj.getMotherId() != null && callObj.getChildId() == null
 						&& callObj.getIsHighRisk() != null) {
 					// Mother
-					outboundCallsRepo.updateHRPForUpcomingCall(callObj.getMotherId(), callObj.getIsHighRisk());
+					outboundCallsRepo.updateHRPForUpcomingCall(callObj.getMotherId(), callObj.getIsHighRisk(), callObj.getHighRiskReason());
 				}
 			}
 			if (null != obj.getIsFurtherCallRequired()) {
@@ -433,7 +454,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+								cal.add(Calendar.DATE, callConfiguration.getTermRange());
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
@@ -441,7 +462,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(motherRecord.getLmpDate());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+								cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
@@ -450,7 +471,7 @@ public class CallClosureImpl {
 
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
-							cal.add(Calendar.DAY_OF_WEEK, 1);
+							cal.add(Calendar.DATE, 1);
 							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 
 						} else if (childRecord != null && childRecord.getDob() != null) {
@@ -470,7 +491,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+								cal.add(Calendar.DATE, callConfiguration.getTermRange());
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 
 							} else if (callConfiguration.getConfigTerms() != null
@@ -478,7 +499,7 @@ public class CallClosureImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(childRecord.getDob());
-								cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+								cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 								callEndDate = getCallDateEndFormat(new Timestamp(cal.getTime().getTime()));
 							}
 
@@ -487,7 +508,7 @@ public class CallClosureImpl {
 
 							Calendar cal = Calendar.getInstance();
 							cal.setTime(callEndDate);
-							cal.add(Calendar.DAY_OF_WEEK, 1);
+							cal.add(Calendar.DATE, 1);
 							callStartDate = getCallDateStartFormat(new Timestamp(cal.getTime().getTime()));
 						}
 						outboundCalls.setPhoneNumberType(phoneNoType);

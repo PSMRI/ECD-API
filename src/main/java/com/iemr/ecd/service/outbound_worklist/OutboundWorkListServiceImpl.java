@@ -43,7 +43,6 @@ public class OutboundWorkListServiceImpl {
 	public List<FetchMotherOutboundWorklist> getMotherWorkList(Integer userId) {
 		try {
 			List<String[]> motherList = outboundCallsRepo.getAgentAllocatedMotherList(userId);
-
 			return getMotherDtoList(motherList);
 		} catch (Exception e) {
 			throw new ECDException(e);

@@ -41,6 +41,9 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	OutboundCalls findByObCallId(Long obCallId);
 
+	@Query("SELECT ob.obCallId, ob.highRiskReason FROM OutboundCalls ob WHERE ob.obCallId IN :obCallIds AND ob.highRiskReason IS NOT NULL")
+	List<Object[]> getHighRiskReasonByObCallIds(@Param("obCallIds") List<Long> obCallIds);
+
 	@Query(value = "call PR_FetchECDMotherOutboundWorklist(:allocatedUserID)", nativeQuery = true)
 	List<String[]> getAgentAllocatedMotherList(@Param("allocatedUserID") Integer allocatedUserID);
 
@@ -378,8 +381,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	@Modifying
 	@Transactional
-	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
-	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk);
+	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk, highRiskReason = :highRiskReason WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
+	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk, @Param("highRiskReason") String highRiskReason);
 
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
