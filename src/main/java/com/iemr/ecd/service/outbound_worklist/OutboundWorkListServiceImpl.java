@@ -153,6 +153,9 @@ public class OutboundWorkListServiceImpl {
 					if (strArr[37] != null) {
 						obj.setAge(Integer.valueOf(strArr[37]));
 					}
+					if (strArr[38] != null) {
+						obj.setHighRiskReason(strArr[38]);
+					}
 
 					motherList.add(obj);
 				} catch (Exception e) {
