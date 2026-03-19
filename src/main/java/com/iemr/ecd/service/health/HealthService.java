@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
 * AMRIT – Accessible Medical Records via Integrated Technology 
 * Integrated EHR (Electronic Health Records) Solution 
@@ -21,8 +20,6 @@
 * along with this program.  If not, see https://www.gnu.org/licenses/.
 */
 
-=======
->>>>>>> main
 package com.iemr.ecd.service.health;
 
 import java.sql.Connection;
