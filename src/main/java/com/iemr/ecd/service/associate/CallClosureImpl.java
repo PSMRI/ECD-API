@@ -168,9 +168,12 @@ public class CallClosureImpl {
 				} else {
 					if (obj.getIsCallDisconnected() != null && obj.getIsCallDisconnected()) {
 						callObj.setCallStatus(Constants.OPEN);
-						callObj.setAllocatedUserId(null);  
-						callObj.setAllocationStatus(Constants.UNALLOCATED);  
-						callObj.setCallAttemptNo(0);  
+						if (request.getReasonForCallNotAnswered() == null ||
+								!Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered())) {
+							callObj.setAllocatedUserId(null);
+							callObj.setAllocationStatus(Constants.UNALLOCATED);
+							callObj.setCallAttemptNo(0);
+						}
 					} else {
 						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
@@ -208,8 +211,6 @@ public class CallClosureImpl {
 				}
 				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
 					callObj.setCallStatus(Constants.OPEN);
-					callObj.setAllocatedUserId(request.getUserId());
-					callObj.setAllocationStatus(Constants.ALLOCATED);
 				}
 				
 				if (request.getIsHrp() != null) {
