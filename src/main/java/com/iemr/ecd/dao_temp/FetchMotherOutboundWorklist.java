@@ -48,6 +48,7 @@ public class FetchMotherOutboundWorklist {
 	private String phoneNoOfWhom;
 	private String whomPhoneNo;
 	private Boolean highRisk;
+	private String highRiskReason;
 
 	private String husbandName;
 	private String address;

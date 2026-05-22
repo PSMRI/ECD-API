@@ -41,6 +41,9 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	OutboundCalls findByObCallId(Long obCallId);
 
+	@Query("SELECT ob.obCallId, ob.highRiskReason FROM OutboundCalls ob WHERE ob.obCallId IN :obCallIds AND ob.highRiskReason IS NOT NULL")
+	List<Object[]> getHighRiskReasonByObCallIds(@Param("obCallIds") List<Long> obCallIds);
+
 	@Query(value = "call PR_FetchECDMotherOutboundWorklist(:allocatedUserID)", nativeQuery = true)
 	List<String[]> getAgentAllocatedMotherList(@Param("allocatedUserID") Integer allocatedUserID);
 
@@ -89,11 +92,18 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	Page<OutboundCalls> getChildRecordsForAssociate(Pageable pageable, @Param("allocationStatus") String allocationStatus,
 			@Param("psmId") Integer psmId, @Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("preferredLanguage") String preferredLanguage);
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND "
-			+ " t.callDateTo >= CURRENT_TIMESTAMP AND "
-			+ " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
-	Page<OutboundCalls> getMotherRecordsForMO(Pageable pageable, @Param("allocationStatus") String allocationStatus,
-			@Param("psmId") Integer psmId);
+        + " t.psmId=:psmId AND "
+        + " ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
+        + " t.callDateTo >= CURRENT_TIMESTAMP AND "
+        + " t.childId IS NULL AND t.motherId IS NOT NULL AND t.isHighRisk = true "
+        + " AND t.deleted = false "
+        + " AND t.displayEcdCallType != 'introductory' "
+        + " AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL )")
+    Page<OutboundCalls> getMotherRecordsForMO(Pageable pageable,
+        @Param("allocationStatus") String allocationStatus,
+        @Param("psmId") Integer psmId,
+        @Param("fDate") Timestamp fDate,
+        @Param("tDate") Timestamp tDate);
 
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
@@ -371,8 +381,8 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 
 	@Modifying
 	@Transactional
-	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
-	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk);
+	@Query(" UPDATE OutboundCalls SET isHighRisk = :isHighRisk, highRiskReason = :highRiskReason WHERE motherId = :motherId AND childId IS NULL AND callDateTo>current_date()")
+	public int updateHRPForUpcomingCall(@Param("motherId") Long motherId, @Param("isHighRisk") Boolean isHighRisk, @Param("highRiskReason") String highRiskReason);
 
 	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t INNER JOIN MotherRecord AS mv ON t.motherId = mv.ecdIdNo WHERE t.allocationStatus =:allocationStatus AND "
 			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "

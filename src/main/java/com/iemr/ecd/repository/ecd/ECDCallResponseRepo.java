@@ -38,10 +38,10 @@ public interface ECDCallResponseRepo extends JpaRepository<ECDCallResponse, Long
 	@Query(value = "call Pr_GetHRPDetails(:motherId, :childId)", nativeQuery = true)
 	List<String[]> getHrpHrniDetailsOld(@Param("motherId") Long motherId, @Param("childId") Long childId);
 
-	@Query(value = " SELECT t FROM ECDCallResponse t WHERE t.motherId=:motherId AND t.reasonsForHrpDB IS NOT NULL ORDER BY 1 DESC ")
+	@Query(value = " SELECT t FROM ECDCallResponse t WHERE t.motherId=:motherId AND t.reasonsForHrpDB IS NOT NULL ORDER BY t.createdDate DESC ")
 	Page<ECDCallResponse> getHrpDetailsMother(Pageable pageable, @Param("motherId") Long motherId);
 
-	@Query(value = " SELECT t FROM ECDCallResponse t WHERE t.childId=:childId AND t.reasonsForHrniDB IS NOT NULL ORDER BY 1 DESC ")
+	@Query(value = " SELECT t FROM ECDCallResponse t WHERE t.childId=:childId AND t.reasonsForHrniDB IS NOT NULL ORDER BY t.createdDate DESC ")
 	Page<ECDCallResponse> getHrniDetailsChild(Pageable pageable, @Param("childId") Long childId);
 
 	@Query(value = "call PR_UpdateHRP_HRniReasons(:benCallId, :obCallId)", nativeQuery = true)

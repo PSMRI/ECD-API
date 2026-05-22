@@ -572,7 +572,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(abortionReport.getRole());
 			
 			result = ecdReportRepo.getAbortionReport(startDate, endDate, abortionReport.getAgentId(),
-						abortionReport.getPsmId(),abortionReport.getRole());
+						abortionReport.getPsmId());
 
 			if (result != null && !result.isEmpty())
 				response = ExcelHelper.tutorialsToExcel(headers, result, c, criteriaColumns);
@@ -771,7 +771,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(stillBirthReport.getRole());
 			
 			result = ecdReportRepo.getStillBirthReport(startDate, endDate, stillBirthReport.getAgentId(),
-					stillBirthReport.getPsmId(),stillBirthReport.getRole());
+					stillBirthReport.getPsmId());
 			
 
 			if (result != null && !result.isEmpty())
@@ -813,7 +813,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(babyDeathReport.getRole());
 			
 			result = ecdReportRepo.getBabyDeathReport(startDate, endDate, babyDeathReport.getAgentId(),
-					babyDeathReport.getPsmId(), babyDeathReport.getRole());
+					babyDeathReport.getPsmId());
 			if (result != null && !result.isEmpty())
 				response = ExcelHelper.tutorialsToExcel(headers, result, c, criteriaColumns);
 			else
@@ -935,7 +935,7 @@ public class ReportServiceImpl implements ReportService {
 				c.setRole(miscarriageReport.getRole());
 			
 			result = ecdReportRepo.getMiscarriageReport(startDate, endDate, miscarriageReport.getAgentId(),
-					miscarriageReport.getPsmId(), miscarriageReport.getRole());
+					miscarriageReport.getPsmId());
 
 			if (result != null && !result.isEmpty())
 				response = ExcelHelper.tutorialsToExcel(headers, result, c, criteriaColumns);

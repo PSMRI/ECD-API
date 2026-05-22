@@ -443,8 +443,12 @@ public class CallAllocationImpl {
 
 		Pageable pageable = PageRequest.of(0, totalRecordToAllocate);
 
-		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getMotherRecordsForMO(pageable, "unallocated",
-				callAllocationDto.getPsmId());
+		Page<OutboundCalls> outboundCallsPage = outboundCallsRepo.getMotherRecordsForMO(
+        pageable,
+        "unallocated",
+        callAllocationDto.getPsmId(),
+        tempFDateStamp,
+        tempTDateStamp);
 
 		List<OutboundCalls> outboundCallsList = outboundCallsPage.getContent();
 
@@ -888,7 +892,7 @@ public class CallAllocationImpl {
 		if (timeStamp != null && daysLater >= 0) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(timeStamp);
-			cal.add(Calendar.DAY_OF_WEEK, daysLater);
+			cal.add(Calendar.DATE, daysLater);
 
 			return new Timestamp(cal.getTime().getTime());
 		} else
@@ -943,7 +947,7 @@ public class CallAllocationImpl {
 
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(motherRecord.getLmpDate());
-									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+									cal.add(Calendar.DATE, callConfiguration.getTermRange());
 
 									callEndDate = new Timestamp(cal.getTime().getTime());
 
@@ -952,7 +956,7 @@ public class CallAllocationImpl {
 
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(motherRecord.getLmpDate());
-									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+									cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 
 									callEndDate = new Timestamp(cal.getTime().getTime());
 								}
@@ -962,7 +966,7 @@ public class CallAllocationImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(callEndDate);
-								cal.add(Calendar.DAY_OF_WEEK, 1);
+								cal.add(Calendar.DATE, 1);
 								callStartDate = new Timestamp(cal.getTime().getTime());
 
 							} else if (childRecord != null && childRecord.getDob() != null) {
@@ -980,7 +984,7 @@ public class CallAllocationImpl {
 
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(childRecord.getDob());
-									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange());
+									cal.add(Calendar.DATE, callConfiguration.getTermRange());
 
 									callEndDate = new Timestamp(cal.getTime().getTime());
 
@@ -989,7 +993,7 @@ public class CallAllocationImpl {
 
 									Calendar cal = Calendar.getInstance();
 									cal.setTime(childRecord.getDob());
-									cal.add(Calendar.DAY_OF_WEEK, callConfiguration.getTermRange() * 30);
+									cal.add(Calendar.DATE, callConfiguration.getTermRange() * 30);
 
 									callEndDate = new Timestamp(cal.getTime().getTime());
 								}
@@ -999,7 +1003,7 @@ public class CallAllocationImpl {
 
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(callEndDate);
-								cal.add(Calendar.DAY_OF_WEEK, 1);
+								cal.add(Calendar.DATE, 1);
 								callStartDate = new Timestamp(cal.getTime().getTime());
 							}
 
