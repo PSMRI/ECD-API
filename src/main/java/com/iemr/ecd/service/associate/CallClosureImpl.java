@@ -208,6 +208,8 @@ public class CallClosureImpl {
 				}
 				if(null != request.getReasonForCallNotAnswered() && Constants.REASONFORCALLNOTANSWERED.contains(request.getReasonForCallNotAnswered()) && !isMaxcallsAttempted) {
 					callObj.setCallStatus(Constants.OPEN);
+					callObj.setAllocatedUserId(request.getUserId());
+					callObj.setAllocationStatus(Constants.ALLOCATED);
 				}
 				
 				if (request.getIsHrp() != null) {
