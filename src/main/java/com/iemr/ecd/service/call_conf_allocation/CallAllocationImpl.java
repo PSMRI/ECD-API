@@ -552,26 +552,26 @@ public class CallAllocationImpl {
 				totalIntroductoryRecord = motherRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
 
-				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR(Constants.UNALLOCATED, psmId, tempFDateStamp,
+				Object[] motherCounts = outboundCallsRepo.getMotherCountsLRHRAllocated(psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
-				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR(Constants.UNALLOCATED, psmId,
-						tempFDateStamp, tempTDateStamp, phoneNoType);
-
-				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother(Constants.ALLOCATED, psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
+				if (motherCounts != null && motherCounts.length == 3) {
+					totalLowRisk = motherCounts[0] != null ? ((Number) motherCounts[0]).intValue() : 0;
+					totalHighRisk = motherCounts[1] != null ? ((Number) motherCounts[1]).intValue() : 0;
+					totalAllocated = motherCounts[2] != null ? ((Number) motherCounts[2]).intValue() : 0;
+				}
 
 			} else if (recordType != null && recordType.equalsIgnoreCase("Child")) {
 
 				totalIntroductoryRecord = childRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
 
-				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLR("unallocated", psmId, tempFDateStamp,
+				Object[] childCounts = outboundCallsRepo.getChildCountsLRHRAllocated(psmId, tempFDateStamp,
 						tempTDateStamp, phoneNoType);
-				totalHighRisk = outboundCallsRepo.getChildUnAllocatedCountHR("unallocated", psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
-
-				totalAllocated = outboundCallsRepo.getTotalAllocatedCountChild("allocated", psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
+				if (childCounts != null && childCounts.length == 3) {
+					totalLowRisk = childCounts[0] != null ? ((Number) childCounts[0]).intValue() : 0;
+					totalHighRisk = childCounts[1] != null ? ((Number) childCounts[1]).intValue() : 0;
+					totalAllocated = childCounts[2] != null ? ((Number) childCounts[2]).intValue() : 0;
+				}
 
 			}
 

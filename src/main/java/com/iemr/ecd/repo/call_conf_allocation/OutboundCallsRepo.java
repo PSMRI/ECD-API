@@ -165,6 +165,40 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 	int getTotalAllocatedCountChild(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
+	// consolidated child counts (LR unallocated + HR unallocated + allocated) in a single scan
+	// replaces 3 separate COUNT queries that each did a full scan of t_mctsoutboundcalls
+	@Query(value = "SELECT "
+			+ " SUM(CASE WHEN AllocationStatus = 'unallocated' AND Deleted = 0 AND DisplayOBCallType != 'introductory' AND (IsHrni = 0 OR IsHrni IS NULL) THEN 1 ELSE 0 END), "
+			+ " SUM(CASE WHEN AllocationStatus = 'unallocated' AND Deleted = 0 AND DisplayOBCallType != 'introductory' AND IsHrni = 1 THEN 1 ELSE 0 END), "
+			+ " SUM(CASE WHEN AllocationStatus = 'allocated' THEN 1 ELSE 0 END) "
+			+ "FROM t_mctsoutboundcalls "
+			+ "WHERE ProviderServiceMapID = :psmId "
+			+ "AND ChildID IS NOT NULL "
+			+ "AND phoneNumberType = :phoneNoType "
+			+ "AND (isFurtherCallRequired = 1 OR isFurtherCallRequired IS NULL) "
+			+ "AND CallDateTo >= CURRENT_TIMESTAMP "
+			+ "AND ((:fDate BETWEEN CallDateFrom AND CallDateTo) OR (:tDate BETWEEN CallDateFrom AND CallDateTo))",
+			nativeQuery = true)
+	Object[] getChildCountsLRHRAllocated(@Param("psmId") Integer psmId,
+			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
+
+	// consolidated mother counts (LR unallocated + HR unallocated + allocated) in a single scan
+	// replaces 3 separate COUNT queries that each did a full scan of t_mctsoutboundcalls
+	@Query(value = "SELECT "
+			+ " SUM(CASE WHEN AllocationStatus = 'unallocated' AND Deleted = 0 AND DisplayOBCallType != 'introductory' AND (IsHighRisk = 0 OR IsHighRisk IS NULL) THEN 1 ELSE 0 END), "
+			+ " SUM(CASE WHEN AllocationStatus = 'unallocated' AND Deleted = 0 AND DisplayOBCallType != 'introductory' AND IsHighRisk = 1 THEN 1 ELSE 0 END), "
+			+ " SUM(CASE WHEN AllocationStatus = 'allocated' THEN 1 ELSE 0 END) "
+			+ "FROM t_mctsoutboundcalls "
+			+ "WHERE ProviderServiceMapID = :psmId "
+			+ "AND ChildID IS NULL AND MotherID IS NOT NULL "
+			+ "AND phoneNumberType = :phoneNoType "
+			+ "AND (isFurtherCallRequired = 1 OR isFurtherCallRequired IS NULL) "
+			+ "AND CallDateTo >= CURRENT_TIMESTAMP "
+			+ "AND ((:fDate BETWEEN CallDateFrom AND CallDateTo) OR (:tDate BETWEEN CallDateFrom AND CallDateTo))",
+			nativeQuery = true)
+	Object[] getMotherCountsLRHRAllocated(@Param("psmId") Integer psmId,
+			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
+
 	// users allocated calls
 	@Query(value = " SELECT t FROM OutboundCalls AS t WHERE t.allocatedUserId=:allocatedUserId AND "
 			+ " t.callStatus=:callStatus ")
