@@ -40,13 +40,15 @@ For steps to clone and set up this Repository, refer to the [Developer Guide](ht
 To build the ECD module from source, follow these steps:
 
 1. Clone the repository to your local machine.
-2. Install the required dependencies and build the module using the following command:
+2. Enable git hooks (run once after cloning):
+   - Run the command `git config core.hooksPath .git-hooks`.
+3. Install the required dependencies and build the module using the following command:
 - Execute the following command:
   ```
   mvn clean install
   ```
-3. You can copy `ecd_example.properties` to `ecd_local.properties` and edit the file accordingly. The file is under `src/main/environment` folder.
-4. Run the spring server with local configuration `mvn spring-boot:run -DENV_VAR=local` 
+4. You can copy `ecd_example.properties` to `ecd_local.properties` and edit the file accordingly. The file is under `src/main/environment` folder.
+5. Run the spring server with local configuration `mvn spring-boot:run -DENV_VAR=local` 
 
 - Open your browser and navigate to http://localhost:8080/swagger-ui.html#!/
 
