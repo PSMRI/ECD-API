@@ -564,14 +564,12 @@ public class CallAllocationImpl {
 
 				totalIntroductoryRecord = childRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
-
-				Object[] childCounts = outboundCallsRepo.getChildCountsLRHRAllocated(psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
-				if (childCounts != null && childCounts.length == 3) {
-					totalLowRisk = childCounts[0] != null ? ((Number) childCounts[0]).intValue() : 0;
-					totalHighRisk = childCounts[1] != null ? ((Number) childCounts[1]).intValue() : 0;
-					totalAllocated = childCounts[2] != null ? ((Number) childCounts[2]).intValue() : 0;
-				}
+				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
+				totalHighRisk = outboundCallsRepo.getChildUnAllocatedCountHR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
+				totalAllocated = outboundCallsRepo.getTotalAllocatedCountChild(Constants.ALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
 
 			}
 
