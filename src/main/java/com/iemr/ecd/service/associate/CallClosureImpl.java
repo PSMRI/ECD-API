@@ -159,6 +159,7 @@ public class CallClosureImpl {
 
 				if ("introductory".equalsIgnoreCase(callObj.getEcdCallType()) && Boolean.TRUE.equals(obj.getIsCallDisconnected()) && StringUtils.hasText(request.getPreferredLanguage())) {
 					callObj.setCallStatus(Constants.OPEN);
+				
 					callObj.setAllocationStatus(Constants.UNALLOCATED);
 				}else if(Boolean.TRUE.equals(obj.getIsCallAnswered())){
 					callObj.setCallStatus(Constants.COMPLETED);
@@ -174,6 +175,9 @@ public class CallClosureImpl {
 							callObj.setAllocationStatus(Constants.UNALLOCATED);
 							callObj.setCallAttemptNo(0);
 						}
+						callObj.setAllocatedUserId(null);  
+						callObj.setAllocationStatus(Constants.UNALLOCATED);  
+						callObj.setCallAttemptNo(0);  
 					} else {
 						callObj.setCallStatus(Constants.COMPLETED);
 						createEcdCallRecordsInOutboundCalls(request, callConfigurationDetails,
