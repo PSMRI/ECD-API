@@ -37,6 +37,8 @@ public interface AgentQualityAuditorMapRepo extends CrudRepository<AgentQualityA
 
 	List<AgentQualityAuditorMap> findByPsmId(Integer psmId);
 
+	boolean existsByPsmIdAndRoleIdAndAgentIdAndDeletedFalse(Integer psmId, Integer roleId, Integer agentId);
+
 	@Query(value = " CALL Pr_QualityAuditorWorklist(:fDate, :tDate,:psmId, :langId, :agentId, :roleId, :isValid, :cycleId, :prevCycleFromDate, :prevCycleToDate ) ", nativeQuery = true)
 	public List<String[]> getQualityAuditorWorklist(@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate,
 			@Param("psmId") Integer psmId, @Param("langId") Integer langId, @Param("agentId") Integer agentId,
