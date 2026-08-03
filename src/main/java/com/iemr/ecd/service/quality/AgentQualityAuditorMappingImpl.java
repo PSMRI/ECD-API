@@ -46,11 +46,18 @@ public class AgentQualityAuditorMappingImpl {
 		try {
 			AgentQualityAuditorMap mapObj;
 			List<AgentQualityAuditorMap> agentMapDetails = new ArrayList<>();
+			List<String> alreadyMappedAgentNames = new ArrayList<>();
 			if (agentQualityAuditorMap != null && agentQualityAuditorMap.getAgentIds() != null
 					&& agentQualityAuditorMap.getAgentIds().length > 0) {
 				int j = 0;
 				String[] agentNamesArr = agentQualityAuditorMap.getAgentNames();
 				for (Integer i : agentQualityAuditorMap.getAgentIds()) {
+					if (agentQualityAuditorMapRepo.existsByPsmIdAndRoleIdAndAgentIdAndDeletedFalse(
+							agentQualityAuditorMap.getPsmId(), agentQualityAuditorMap.getRoleId(), i)) {
+						alreadyMappedAgentNames.add(agentNamesArr[j]);
+						j++;
+						continue;
+					}
 					mapObj = new AgentQualityAuditorMap();
 					mapObj.setQualityAuditorId(agentQualityAuditorMap.getQualityAuditorId());
 					mapObj.setQualityAuditorName(agentQualityAuditorMap.getQualityAuditorName());
@@ -67,10 +74,16 @@ public class AgentQualityAuditorMappingImpl {
 			} else {
 				agentMapDetails.add(agentQualityAuditorMap);
 			}
-			agentQualityAuditorMapRepo.saveAll(agentMapDetails);
+			if (!agentMapDetails.isEmpty())
+				agentQualityAuditorMapRepo.saveAll(agentMapDetails);
 
 			Map<String, Object> responseMap = new HashMap<>();
-			responseMap.put("response", "Agent Quality Auditor Mapping Created Successfully");
+			if (!alreadyMappedAgentNames.isEmpty()) {
+				responseMap.put("response", "Agent Quality Auditor Mapping Created Successfully. Already mapped, skipped: "
+						+ String.join(", ", alreadyMappedAgentNames));
+			} else {
+				responseMap.put("response", "Agent Quality Auditor Mapping Created Successfully");
+			}
 			return new Gson().toJson(responseMap);
 		} catch (Exception e) {
 			throw new ECDException(e);
