@@ -62,6 +62,8 @@ public class RCHDataUploadServiceImpl {
 
 	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+	private static final long MAX_FILE_SIZE_BYTES = 5L * 1024 * 1024;
+
 	@Autowired
 	private MotherRecordRepo motherRecordRepo;
 	@Autowired
@@ -80,16 +82,16 @@ public class RCHDataUploadServiceImpl {
 
 				String base64File = rchFileUploadDto.getFileContent();
 				byte[] excelDataBytes = Base64.decodeBase64(base64File);
+
+				if (excelDataBytes.length > MAX_FILE_SIZE_BYTES)
+					throw new ECDException("File size exceeds the maximum allowed limit of 5MB");
+
 				workbook = this.getXSSFWorkbook(excelDataBytes);
 
 				if (workbook.getNumberOfSheets() > 0) {
 					Sheet sheet = workbook.getSheetAt(0);
 
 					if (sheet != null) {
-
-						if (sheet.getPhysicalNumberOfRows() > 1000)
-							throw new ECDException(
-									"File is having more then 1000 records,please upload max 1000 records at a time");
 
 						if (rchFileUploadDto.getFieldFor() != null
 								&& rchFileUploadDto.getFieldFor().equalsIgnoreCase("Mother Data")) {

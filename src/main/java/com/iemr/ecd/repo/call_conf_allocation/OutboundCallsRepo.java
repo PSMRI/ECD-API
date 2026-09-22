@@ -123,11 +123,18 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// un-allocated, child low risk,
-	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NOT NULL AND (t.isHrni = false OR t.isHrni IS NULL )  "
-			+ " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory' AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
-        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
+	@Query(value = "SELECT COUNT(1) FROM t_mctsoutboundcalls t FORCE INDEX (idx_mcts_eligible_v2) "
+			+ "WHERE t.AllocationStatus = :allocationStatus "
+			+ "AND t.ProviderServiceMapID = :psmId "
+			+ "AND ((:fDate BETWEEN t.CallDateFrom AND t.CallDateTo) OR (:tDate BETWEEN t.CallDateFrom AND t.CallDateTo)) "
+			+ "AND t.ChildID IS NOT NULL "
+			+ "AND (t.IsHrni = 0 OR t.IsHrni IS NULL) "
+			+ "AND t.phoneNumberType = :phoneNoType "
+			+ "AND t.Deleted = 0 "
+			+ "AND t.DisplayOBCallType != 'introductory' "
+			+ "AND (t.isFurtherCallRequired = 1 OR t.isFurtherCallRequired IS NULL) "
+			+ "AND t.CallDateTo >= CURRENT_TIMESTAMP",
+			nativeQuery = true)
 	int getChildUnAllocatedCountLR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
@@ -141,11 +148,18 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// un-allocated, child high risk,
-	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo)) AND "
-			+ " t.childId IS NOT NULL AND t.isHrni = true  " + " AND t.phoneNumberType=:phoneNoType AND t.deleted = false AND t.displayEcdCallType != 'introductory'"
-			+ " AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
-        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
+	@Query(value = "SELECT COUNT(1) FROM t_mctsoutboundcalls t FORCE INDEX (idx_mcts_eligible_v2) "
+			+ "WHERE t.AllocationStatus = :allocationStatus "
+			+ "AND t.ProviderServiceMapID = :psmId "
+			+ "AND ((:fDate BETWEEN t.CallDateFrom AND t.CallDateTo) OR (:tDate BETWEEN t.CallDateFrom AND t.CallDateTo)) "
+			+ "AND t.CallDateTo >= CURRENT_TIMESTAMP "
+			+ "AND t.ChildID IS NOT NULL "
+			+ "AND t.IsHrni = 1 "
+			+ "AND t.phoneNumberType = :phoneNoType "
+			+ "AND t.Deleted = 0 "
+			+ "AND t.DisplayOBCallType != 'introductory' "
+			+ "AND (t.isFurtherCallRequired = 1 OR t.isFurtherCallRequired IS NULL)",
+			nativeQuery = true)
 	int getChildUnAllocatedCountHR(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
@@ -158,10 +172,15 @@ public interface OutboundCallsRepo extends CrudRepository<OutboundCalls, Long> {
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 
 	// allocated, child record,
-	@Query(value = " SELECT COUNT(1) FROM OutboundCalls AS t WHERE t.allocationStatus =:allocationStatus AND "
-			+ " t.psmId=:psmId AND ((:fDate between t.callDateFrom AND t.callDateTo) OR (:tDate between t.callDateFrom AND t.callDateTo))  AND "
-			+ " t.childId IS NOT NULL  AND t.phoneNumberType=:phoneNoType AND (t.isFurtherCallRequired = true OR t.isFurtherCallRequired IS NULL ) AND "
-        	+ " t.callDateTo >= CURRENT_TIMESTAMP")
+	@Query(value = "SELECT COUNT(1) FROM t_mctsoutboundcalls t FORCE INDEX (idx_mcts_eligible_v2) "
+			+ "WHERE t.AllocationStatus = :allocationStatus "
+			+ "AND t.ProviderServiceMapID = :psmId "
+			+ "AND ((:fDate BETWEEN t.CallDateFrom AND t.CallDateTo) OR (:tDate BETWEEN t.CallDateFrom AND t.CallDateTo)) "
+			+ "AND t.ChildID IS NOT NULL "
+			+ "AND t.phoneNumberType = :phoneNoType "
+			+ "AND (t.isFurtherCallRequired = 1 OR t.isFurtherCallRequired IS NULL) "
+			+ "AND t.CallDateTo >= CURRENT_TIMESTAMP",
+			nativeQuery = true)
 	int getTotalAllocatedCountChild(@Param("allocationStatus") String allocationStatus, @Param("psmId") Integer psmId,
 			@Param("fDate") Timestamp fDate, @Param("tDate") Timestamp tDate, @Param("phoneNoType") String phoneNoType);
 

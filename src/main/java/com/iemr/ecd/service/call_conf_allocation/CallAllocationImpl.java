@@ -551,27 +551,23 @@ public class CallAllocationImpl {
 
 				totalIntroductoryRecord = motherRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
-
-				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR(Constants.UNALLOCATED, psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
+				totalLowRisk = outboundCallsRepo.getMotherUnAllocatedCountLR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
 				totalHighRisk = outboundCallsRepo.getMotherUnAllocatedCountHR(Constants.UNALLOCATED, psmId,
 						tempFDateStamp, tempTDateStamp, phoneNoType);
-
-				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother(Constants.ALLOCATED, psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
+				totalAllocated = outboundCallsRepo.getTotalAllocatedCountMother(Constants.ALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
 
 			} else if (recordType != null && recordType.equalsIgnoreCase("Child")) {
 
 				totalIntroductoryRecord = childRecordRepo.getRecordCount(false, tempFDateStamp, tempTDateStamp,
 						phoneNoType);
-
-				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLR("unallocated", psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
-				totalHighRisk = outboundCallsRepo.getChildUnAllocatedCountHR("unallocated", psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
-
-				totalAllocated = outboundCallsRepo.getTotalAllocatedCountChild("allocated", psmId, tempFDateStamp,
-						tempTDateStamp, phoneNoType);
+				totalLowRisk = outboundCallsRepo.getChildUnAllocatedCountLR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
+				totalHighRisk = outboundCallsRepo.getChildUnAllocatedCountHR(Constants.UNALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
+				totalAllocated = outboundCallsRepo.getTotalAllocatedCountChild(Constants.ALLOCATED, psmId,
+						tempFDateStamp, tempTDateStamp, phoneNoType);
 
 			}
 
