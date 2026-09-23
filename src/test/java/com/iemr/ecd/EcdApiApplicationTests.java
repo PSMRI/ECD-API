@@ -21,14 +21,55 @@
 */
 package com.iemr.ecd;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+
 class EcdApiApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void mainDelegatesToSpringApplication() {
+		String[] args = { "--server.port=0" };
+
+		try (MockedStatic<SpringApplication> springApplication = Mockito.mockStatic(SpringApplication.class)) {
+			EcdApiApplication.main(args);
+
+			springApplication.verify(() -> SpringApplication.run(EcdApiApplication.class, args));
+		}
 	}
 
+	@Test
+	void redisTemplateUsesStringKeysAndJsonValues() {
+		RedisConnectionFactory factory = mock(RedisConnectionFactory.class);
+
+		RedisTemplate<String, Object> template = new EcdApiApplication().redisTemplate(factory);
+
+		assertSame(factory, template.getConnectionFactory());
+		assertEquals(StringRedisSerializer.class, template.getKeySerializer().getClass());
+		assertNotNull(template.getValueSerializer());
+	}
+
+	@Test
+	void servletInitializerRegistersApplicationSource() {
+		SpringApplicationBuilder builder = mock(SpringApplicationBuilder.class);
+		when(builder.sources(any(Class[].class))).thenReturn(builder);
+
+		SpringApplicationBuilder result = new ServletInitializer().configure(builder);
+
+		assertSame(builder, result);
+		verify(builder).sources(EcdApiApplication.class);
+	}
 }
