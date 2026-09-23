@@ -42,34 +42,36 @@ public class CustomExceptionResponse {
 	private Object data;
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	public static final int SUCCESS = 200;
-	public static final int GENERIC_FAILURE = 5000;
-	public static final int OBJECT_FAILURE = 5001;
-	public static final int USERID_FAILURE = 5002;
-	public static final int PASSWORD_FAILURE = 5003;
-	public static final int PREVILAGE_FAILURE = 5004;
-	public static final int CODE_EXCEPTION = 5005;
-	public static final int ENVIRONMENT_EXCEPTION = 5006;
-	public static final int PARSE_EXCEPTION = 5007;
-	public static final int DB_EXCEPTION = 5008;
 	public static final int BAD_REQUEST = 400;
+	public static final int UNAUTHORIZED = 401;
+	public static final int FORBIDDEN = 403;
 	public static final int NOT_FOUND = 404;
+	public static final int CONFLICT = 409;
+	public static final int INTERNAL_SERVER_ERROR = 500;
+	public static final int DB_EXCEPTION = 500;
 
 	public static final String SUCCESS_SC = "SUCCESS";
-	public static final String NOT_FOUND_SC = "NOT_FOUND";
-	public static final String DB_EXCEPTION_SC = "DB_EXCEPTION";
 	public static final String BAD_REQUEST_SC = "BAD_REQUEST";
+	public static final String UNAUTHORIZED_SC = "UNAUTHORIZED";
+	public static final String FORBIDDEN_SC = "FORBIDDEN";
+	public static final String NOT_FOUND_SC = "NOT_FOUND";
+	public static final String CONFLICT_SC = "CONFLICT";
 	public static final String INTERNAL_SERVER_ERROR_SC = "INTERNAL_SERVER_ERROR";
+	public static final String DB_EXCEPTION_SC = "DATABASE_ERROR";
 
 	public static final String SUCCESS_SC_V = "200";
-	public static final String NOT_FOUND_SC_V = "404";
-	public static final String DB_EXCEPTION_SC_V = "5008";
 	public static final String BAD_REQUEST_SC_V = "400";
+	public static final String UNAUTHORIZED_SC_V = "401";
+	public static final String FORBIDDEN_SC_V = "403";
+	public static final String NOT_FOUND_SC_V = "404";
+	public static final String CONFLICT_SC_V = "409";
 	public static final String INTERNAL_SERVER_ERROR_SC_V = "500";
+	public static final String DB_EXCEPTION_SC_V = "500";
 
 	@Expose
-	private int statusCode = GENERIC_FAILURE;
+	private int statusCode = INTERNAL_SERVER_ERROR;
 	@Expose
-	private String errorMessage = "Failed with generic error";
+	private String errorMessage = "Internal Server Error";
 	@Expose
 	private String status = "FAILURE";
 	private static final String RESPONSE = "{\"response\":\"$$STRING\"}";
@@ -102,85 +104,54 @@ public class CustomExceptionResponse {
 		Date currDate = Calendar.getInstance().getTime();
 		logger.info("error happened due to " + thrown.getClass().getSimpleName() + " at " + currDate.toString());
 
-		switch (thrown.getCause().getClass().getSimpleName()) {
+		String causeClass = thrown.getClass().getSimpleName();
+		if (thrown.getCause() != null) {
+			causeClass = thrown.getCause().getClass().getSimpleName();
+		}
+
+		switch (causeClass) {
 		case "IEMRException":
-			this.statusCode = USERID_FAILURE;
+			this.statusCode = UNAUTHORIZED;
 			status = "User login failed";
 			errorMessage = thrown.getMessage();
 			break;
 		case "JSONException":
-			this.statusCode = OBJECT_FAILURE;
+			this.statusCode = BAD_REQUEST;
 			status = "Invalid object conversion";
 			errorMessage = "Invalid object conversion";
 			break;
 
 		case "SQLException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "SQLGrammarException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "DataException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "ConstraintViolationException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "GenericJDBCException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "JDBCConnectionException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "LockAcquisitionException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
-			break;
 		case "InvalidDataAccessResourceUsageException":
-			this.statusCode = DB_EXCEPTION;
+		case "JDBCException":
+			this.statusCode = INTERNAL_SERVER_ERROR;
 			status = DB_EXCEPTION_SC;
-			errorMessage = thrown.getMessage();
+			errorMessage = "Database error occurred";
 			break;
 
 		case "ParseException":
 		case "NullPointerException":
-
 		case "ArrayIndexOutOfBoundsException":
-
 		case "IOException":
 		case "ConnectException":
 		case "ConnectIOException":
-			this.statusCode = ENVIRONMENT_EXCEPTION;
-			status = "Failed with connection issues at " + currDate.toString() + "Please try after some time. "
-					+ "If error is still seen,  contact your administrator.";
-			errorMessage = thrown.getMessage();
-			break;
-		case "JDBCException":
-			this.statusCode = DB_EXCEPTION;
-			status = DB_EXCEPTION_SC;
+			this.statusCode = INTERNAL_SERVER_ERROR;
+			status = "Environment or connection error";
 			errorMessage = thrown.getMessage();
 			break;
 		default:
-			this.statusCode = GENERIC_FAILURE;
-			status = "Failed with " + thrown.getMessage() + " at " + currDate.toString()
-					+ ".Please try after some time. If error is still seen, contact your administrator.";
+			this.statusCode = INTERNAL_SERVER_ERROR;
+			status = "An unexpected error occurred";
 			errorMessage = thrown.getMessage();
 			break;
 		}
-		logger.error("Failure happend with " + thrown.getMessage() + "at " + currDate.toString(), thrown);
+		logger.error("Failure happened with " + thrown.getMessage() + "at " + currDate.toString(), thrown);
 	}
 
 	public void setError(int errorCode, String message, String status) {

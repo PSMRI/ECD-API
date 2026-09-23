@@ -21,34 +21,79 @@
 */
 package com.iemr.ecd.utils.advice.exception_handler;
 
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.iemr.ecd.dto.ErrorResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
-public class EcdGlobalExceptionHandler extends ResponseEntityExceptionHandler {
+public class EcdGlobalExceptionHandler {
 
-	Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+	private static final Logger logger = LoggerFactory.getLogger(EcdGlobalExceptionHandler.class);
 
-	@ExceptionHandler
-	public CustomExceptionResponse handleInvalidRequestParameterException(InvalidRequestException e) {
-		logger.error("invalid request exception : " + e);
-		CustomExceptionResponse customExceptionResponse = new CustomExceptionResponse();
-		customExceptionResponse.setError(e);
-
-		return customExceptionResponse;
-
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<ErrorResponse> handleInvalidRequestException(InvalidRequestException ex, HttpServletRequest request) {
+		logger.error("Invalid request: {}", ex.getMessage());
+		ErrorResponse error = ErrorResponse.builder()
+				.timestamp(LocalDateTime.now())
+				.status(HttpStatus.BAD_REQUEST.value())
+				.error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+				.message(ex.getMessage())
+				.path(request.getRequestURI())
+				.build();
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler
-	public CustomExceptionResponse handleGeneralException(ECDException e) {
-		logger.error("ECD exception : " + e);
-		CustomExceptionResponse customExceptionResponse = new CustomExceptionResponse();
-		customExceptionResponse.setError(e);
-
-		return customExceptionResponse;
+	@ExceptionHandler(ECDException.class)
+	public ResponseEntity<ErrorResponse> handleECDException(ECDException ex, HttpServletRequest request) {
+		logger.error("ECD error: {}", ex.getMessage());
+		ErrorResponse error = ErrorResponse.builder()
+				.timestamp(LocalDateTime.now())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+				.error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+				.message(ex.getMessage())
+				.path(request.getRequestURI())
+				.build();
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+		String errorMessage = ex.getBindingResult().getFieldErrors().stream()
+				.map(error -> error.getField() + ": " + error.getDefaultMessage())
+				.collect(Collectors.joining(", "));
+		
+		logger.error("Validation error: {}", errorMessage);
+		ErrorResponse error = ErrorResponse.builder()
+				.timestamp(LocalDateTime.now())
+				.status(HttpStatus.BAD_REQUEST.value())
+				.error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+				.message(errorMessage)
+				.path(request.getRequestURI())
+				.build();
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> handleGeneralException(Exception ex, HttpServletRequest request) {
+		logger.error("Unexpected error: ", ex);
+		ErrorResponse error = ErrorResponse.builder()
+				.timestamp(LocalDateTime.now())
+				.status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+				.error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
+				.message("An unexpected error occurred. Please contact administrator.")
+				.path(request.getRequestURI())
+				.build();
+		return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 }
